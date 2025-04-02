@@ -1,0 +1,69 @@
+﻿@model IEnumerable<FootballManager.Models.Injury>
+
+@{
+    ViewBag.Title = "Player Injuries";
+}
+
+<h2>Injuries</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Player
+        </th>
+        <th>
+            Team
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.InjuryType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Severity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateInjured)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ExpectedRecoveryDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Notes)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.Player.FirstName + " " + item.Player.LastName, "Details", "Players", new { id = item.PlayerId }, null)
+        </td>
+        <td>
+            @Html.ActionLink(item.Team.Name, "Details", "Teams", new { id = item.TeamId }, null)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.InjuryType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Severity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateInjured)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ExpectedRecoveryDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Notes)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.InjuryId }) |
+            @Html.ActionLink("Details", "Details", new { id = item.InjuryId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.InjuryId })
+        </td>
+    </tr>
+}
+
+</table>

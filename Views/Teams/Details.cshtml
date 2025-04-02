@@ -1,0 +1,114 @@
+﻿@model FootballManager.Models.TeamDetailsViewModel
+
+@{
+    ViewBag.Title = Model.Team.Name;
+}
+
+<!-- Header Section -->
+<div class="team-header p-4 rounded text-white d-flex justify-content-between align-items-center" style="background-color: #9d0000;">
+    <div class="d-flex align-items-center">
+        <img src="@Model.Team.LogoUrl" alt="@Model.Team.Name Logo" style="height: 100px; width: auto; margin-right: 20px;" />
+        <div>
+            <h2>@Model.Team.Name</h2>
+            <p><strong>City:</strong> @Model.Team.City</p>
+            <p><strong>League:</strong> @Model.Team.League</p>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<ul class="nav nav-tabs mb-3" id="teamTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#stats" role="tab"><i class="fas fa-chart-bar"></i> Stats</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#fixtures" role="tab"><i class="fas fa-calendar-alt"></i> Fixtures</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#squad" role="tab"><i class="fas fa-users"></i> Squad</a>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content" id="teamTabContent">
+    <!-- Stats Tab -->
+    <div class="tab-pane fade show active" id="stats" role="tabpanel">
+        <div class="list-group">
+            <div class="list-group-item"><strong>Matches Played:</strong> @Model.Team.matches_played</div>
+            <div class="list-group-item">
+                <strong>Wins:</strong> @Model.Team.Wins |
+                <strong>Draws:</strong> @Model.Team.Draws |
+                <strong>Losses:</strong> @Model.Team.Losses
+            </div>
+            <div class="list-group-item">
+                <strong>Goals For:</strong> @Model.Team.goals_for |
+                <strong>Goals Against:</strong> @Model.Team.goals_against
+            </div>
+            <div class="list-group-item"><strong>Points:</strong> @Model.Team.Points</div>
+        </div>
+    </div>
+
+    <!-- Fixtures Tab -->
+    <div class="tab-pane fade" id="fixtures" role="tabpanel">
+        @if (Model.UpcomingMatches.Any())
+        {
+            <table class="table table-hover mt-3">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Opponent</th>
+                        <th>Venue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var match in Model.UpcomingMatches)
+                    {
+                        var opponent = match.HomeTeamId == Model.Team.TeamId ? match.AwayTeam?.Name : match.HomeTeam?.Name;
+                        var venue = match.HomeTeamId == Model.Team.TeamId ? "Home" : "Away";
+
+                        <tr>
+                            <td>@match.MatchDate.ToString("yyyy-MM-dd")</td>
+                            <td>@opponent</td>
+                            <td>@venue</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No upcoming matches found.</p>
+        }
+    </div>
+
+    <!-- Squad Tab -->
+    <div class="tab-pane fade" id="squad" role="tabpanel">
+        @if (Model.Squad.Any())
+        {
+            <ul class="list-group mt-3">
+                @foreach (var player in Model.Squad)
+                {
+                    <li class="list-group-item">
+                        <strong>@player.FirstName @player.LastName</strong> - @player.Position
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No players found for this team.</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Activate Bootstrap tabs properly
+        $(function () {
+            $('a[data-toggle="tab"]').on('click', function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+        });
+    </script>
+}

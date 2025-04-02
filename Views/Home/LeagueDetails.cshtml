@@ -1,0 +1,96 @@
+﻿@model FootballManager.Models.HomeViewModel
+
+<h2 class="text-center mt-4">@Model.SelectedLeague Standings</h2>
+
+@if (Model.Standings != null && Model.Standings.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Team</th>
+                <th>Matches Played</th>
+                <th>Wins</th>
+                <th>Draws</th>
+                <th>Losses</th>
+                <th>Goals For</th>
+                <th>Goals Against</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int position = 1;
+                foreach (var team in Model.Standings)
+                {
+                    <tr>
+                        <td>@position</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(team.LogoUrl))
+                            {
+                                <img src="@team.LogoUrl" alt="Logo" width="24" height="24" style="margin-right:6px; vertical-align:middle;" />
+                            }
+                            @team.Name
+                        </td>
+                        <td>@team.matches_played</td>
+                        <td>@team.Wins</td>
+                        <td>@team.Draws</td>
+                        <td>@team.Losses</td>
+                        <td>@team.goals_for</td>
+                        <td>@team.goals_against</td>
+                        <td><b>@team.Points</b></td>
+                    </tr>
+                    position++;
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-center text-danger">No standings data available for this league.</p>
+}
+
+<hr />
+<h3 class="text-center mt-4">Upcoming Matches</h3>
+
+@if (Model.UpcomingMatches != null && Model.UpcomingMatches.Any())
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Venue</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var match in Model.UpcomingMatches)
+            {
+                <tr>
+                    <td>@match.MatchDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(match.HomeTeamLogo))
+                        {
+                            <img src="@match.HomeTeamLogo" alt="Home Logo" width="20" height="20" style="margin-right:5px; vertical-align:middle;" />
+                        }
+                        @(match.HomeTeam?.Name ?? match.HomeTeamName)
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(match.AwayTeamLogo))
+                        {
+                            <img src="@match.AwayTeamLogo" alt="Away Logo" width="20" height="20" style="margin-right:5px; vertical-align:middle;" />
+                        }
+                        @(match.AwayTeam?.Name ?? match.AwayTeamName)
+                    </td>
+                    <td>@match.Venue</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-center text-muted">No upcoming matches scheduled for this league.</p>
+}

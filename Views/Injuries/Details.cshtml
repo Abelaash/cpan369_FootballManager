@@ -1,0 +1,58 @@
+﻿@model FootballManager.Models.Injury
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Injury</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.InjuryType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InjuryType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Severity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Severity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateInjured)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateInjured)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ExpectedRecoveryDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ExpectedRecoveryDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.InjuryId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

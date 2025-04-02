@@ -1,0 +1,34 @@
+﻿@model IEnumerable<FootballManager.Models.Match>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered text-center">
+        <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Home Team</th>
+                <th>Away Team</th>
+                <th>Venue</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var match in Model)
+                {
+                    <tr>
+                        <td>@match.MatchDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@match.HomeTeam.Name</td>
+                        <td>@match.AwayTeam.Name</td>
+                        <td>@match.Venue</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted">No upcoming matches scheduled.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

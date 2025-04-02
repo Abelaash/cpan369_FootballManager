@@ -1,0 +1,64 @@
+﻿@model FootballManager.Models.Injury
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Injury</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.InjuryType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InjuryType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Severity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Severity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateInjured)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateInjured)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ExpectedRecoveryDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ExpectedRecoveryDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-primary" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

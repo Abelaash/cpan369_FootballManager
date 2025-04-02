@@ -1,0 +1,52 @@
+﻿@model IEnumerable<FootballManager.Models.Player>
+
+@{
+    ViewBag.Title = "Players";
+}
+
+<h2>Players</h2>
+
+<!-- Top action buttons -->
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
+    @Html.ActionLink("Import Players", "ImportFromApi", "Players", new { teamId = 39 }, new { @class = "btn btn-primary ml-2" })
+</p>
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.FirstName)</th>
+            <th>@Html.DisplayNameFor(model => model.LastName)</th>
+            <th>@Html.DisplayNameFor(model => model.Position)</th>
+            <th>@Html.DisplayNameFor(model => model.JerseyNumber)</th>
+            <th>@Html.DisplayNameFor(model => model.Age)</th>
+            <th>@Html.DisplayNameFor(model => model.Height)</th>
+            <th>@Html.DisplayNameFor(model => model.Weight)</th>
+            <th>Team</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Position)</td>
+                <td>@Html.DisplayFor(modelItem => item.JerseyNumber)</td>
+                <td>@Html.DisplayFor(modelItem => item.Age)</td>
+                <td>@Html.DisplayFor(modelItem => item.Height)</td>
+                <td>@Html.DisplayFor(modelItem => item.Weight)</td>
+                <td>
+                    @Html.ActionLink(item.Team?.Name ?? "Unknown", "Details", "Teams", new { id = item.TeamId }, null)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.PlayerId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.PlayerId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.PlayerId })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

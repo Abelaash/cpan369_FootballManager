@@ -1,0 +1,55 @@
+﻿@model FootballManager.Models.HomeViewModel
+
+@{
+    ViewBag.Title = "Home - Football Management System";
+}
+
+<main class="container mt-4">
+    <section class="text-center bg-dark text-white p-5 rounded shadow-lg">
+        <h1 class="display-4">Welcome to Football Manager</h1>
+        <p class="lead">Effortlessly manage teams, players, staff, and injuries all in one place.</p>
+        @Html.ActionLink("Manage Teams", "Index", "Teams", null, new { @class = "btn btn-primary btn-lg" })
+        @Html.ActionLink("Explore Players", "Index", "Players", null, new { @class = "btn btn-success btn-lg" })
+    </section>
+
+    <div class="row mt-5 text-center">
+        <div class="col-md-3">
+            <h3>Manage Teams</h3>
+            <p>Create, update, and manage teams effortlessly.</p>
+            @Html.ActionLink("View Teams", "Index", "Teams", null, new { @class = "btn btn-outline-dark" })
+        </div>
+        <div class="col-md-3">
+            <h3>Player Profiles</h3>
+            <p>Check player stats, rankings, and performance.</p>
+            @Html.ActionLink("Explore Players", "Index", "Players", null, new { @class = "btn btn-outline-dark" })
+        </div>
+        <div class="col-md-3">
+            <h3>Coaching Staff</h3>
+            <p>Manage team staff, coaches, and medical personnel.</p>
+            @Html.ActionLink("View Staff", "Index", "Staffs", null, new { @class = "btn btn-outline-dark" })
+        </div>
+        <div class="col-md-3">
+            <h3>Injury Reports</h3>
+            <p>Track injured players and their recovery status.</p>
+            @Html.ActionLink("Check Injuries", "Index", "Injuries", null, new { @class = "btn btn-outline-dark" })
+        </div>
+    </div>
+
+    @*<div class="row mt-5">
+        <div class="col-md-8">
+            @Html.Partial("_LeagueStandings", Model)
+        </div>
+        <div class="col-md-4">
+            <h2 class="text-center">Upcoming Matches</h2>
+            @Html.Partial("_UpcomingMatches", Model.UpcomingMatches)
+        </div>
+    </div>*@
+
+    <hr class="mt-5" />
+
+    <div class="text-center my-4">
+       
+    </div>
+
+    @Html.Partial("_OtherLeagues")
+</main>
