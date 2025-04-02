@@ -28,15 +28,11 @@ namespace FootballManager.Controllers
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
 
             var team = db.Teams.Find(id);
             if (team == null)
-            {
                 return HttpNotFound();
-            }
 
             var upcomingMatches = db.Matches
                 .Include(m => m.HomeTeam)
@@ -44,7 +40,6 @@ namespace FootballManager.Controllers
                 .Where(m => m.Status == "Upcoming" &&
                        (m.HomeTeamId == team.TeamId || m.AwayTeamId == team.TeamId))
                 .OrderBy(m => m.MatchDate)
-                .Take(5)
                 .ToList();
 
             var squad = db.Players.Where(p => p.TeamId == team.TeamId).ToList();
@@ -58,6 +53,41 @@ namespace FootballManager.Controllers
 
             return View(viewModel);
         }
+
+
+        public async Task<ActionResult> ImportFixturesFromApi()
+        {
+            var service = new ApiFootballService();
+            var leagues = new List<string> { "Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1", "Eredivisie" };
+
+            foreach (var league in leagues)
+            {
+                var fixtures = service.GetUpcomingMatches(league);
+
+                foreach (var fixture in fixtures)
+                {
+                    var homeTeam = db.Teams.FirstOrDefault(t => t.Name == fixture.HomeTeamName);
+                    var awayTeam = db.Teams.FirstOrDefault(t => t.Name == fixture.AwayTeamName);
+
+                    if (homeTeam != null && awayTeam != null && !db.Matches.Any(m =>
+                        m.HomeTeamId == homeTeam.TeamId &&
+                        m.AwayTeamId == awayTeam.TeamId &&
+                        m.MatchDate == fixture.MatchDate))
+                    {
+                        fixture.HomeTeamId = homeTeam.TeamId;
+                        fixture.AwayTeamId = awayTeam.TeamId;
+                        fixture.Status = "Upcoming";
+                        db.Matches.Add(fixture);
+                    }
+                }
+            }
+
+            await db.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Fixtures imported successfully!";
+            return RedirectToAction("Index");
+        }
+
+
 
 
 
