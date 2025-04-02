@@ -38,16 +38,17 @@ namespace FootballManager.Controllers
                 return HttpNotFound();
             }
 
-            var upcomingMatches = db.Matches
-                .Include(m => m.HomeTeam)
-                .Include(m => m.AwayTeam)
-                .Where(m => m.Status == "Upcoming" &&
-                       (m.HomeTeamId == team.TeamId || m.AwayTeamId == team.TeamId))
+            var squad = db.Players.Where(p => p.TeamId == team.TeamId).ToList();
+
+            // Try fetching fixtures using API service
+            var apiService = new ApiFootballService();
+            var leagueFixtures = apiService.GetUpcomingMatches(team.League); // gets upcoming matches from API
+
+            var upcomingMatches = leagueFixtures
+                .Where(m => m.HomeTeamName == team.Name || m.AwayTeamName == team.Name)
                 .OrderBy(m => m.MatchDate)
                 .Take(5)
                 .ToList();
-
-            var squad = db.Players.Where(p => p.TeamId == team.TeamId).ToList();
 
             var viewModel = new TeamDetailsViewModel
             {
