@@ -19,5 +19,7 @@ namespace FootballManager.Models
 
         public DbSet<Match> Matches { get; set; }
 
+       public DbSet<Account> Accounts { get; set; }
+
     }
 }
