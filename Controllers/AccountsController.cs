@@ -53,7 +53,7 @@ namespace FootballManager.Controllers
 
             if (user != null)
             {
-                Session["UserId"] = user.userId;
+                Session["UserId"] = user.UserId;
                 Session["Username"] = user.Username;
                 return RedirectToAction("Index", "Home");
             }
