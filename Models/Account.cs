@@ -7,11 +7,11 @@ using System.Web;
 
 namespace FootballManager.Models
 {
-    [Table("Usertbl")]
+    [Table("Users")]
     public class Account
     {
         [Key]
-        public int userId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [StringLength(50)]

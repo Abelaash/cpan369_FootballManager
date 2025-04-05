@@ -14,14 +14,14 @@ namespace FootballManager.Models
         public int Id { get; set; }
 
         [ForeignKey("HomeTeam")]
-        [Column("home_team_id")]  // ✅ Explicitly map to SQL column
+        [Column("home_team_id")]  
         public int HomeTeamId { get; set; }
 
         [ForeignKey("AwayTeam")]
-        [Column("away_team_id")]  // ✅ Explicitly map to SQL column
+        [Column("away_team_id")]  
         public int AwayTeamId { get; set; }
 
-        [Column("match_date")]  // ✅ Explicitly map to SQL column
+        [Column("match_date")] 
         public DateTime MatchDate { get; set; }
 
         [NotMapped]
@@ -40,18 +40,18 @@ namespace FootballManager.Models
 
         [Required]
         [StringLength(255)]
-        [Column("venue")]  // ✅ Explicitly map to SQL column
+        [Column("venue")]  
         public string Venue { get; set; }
 
         [Required]
         [StringLength(20)]
-        [Column("status")]  // ✅ Explicitly map to SQL column
+        [Column("status")]  
         public string Status { get; set; } = "Upcoming";
 
-        [Column("score_home")]  // ✅ Explicitly map to SQL column
+        [Column("score_home")]  
         public int? ScoreHome { get; set; }
 
-        [Column("score_away")]  // ✅ Explicitly map to SQL column
+        [Column("score_away")]  
         public int? ScoreAway { get; set; }
 
         public virtual Team HomeTeam { get; set; }
