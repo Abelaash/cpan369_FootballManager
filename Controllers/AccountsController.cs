@@ -1,6 +1,12 @@
-﻿using FootballManager.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Web;
 using System.Web.Mvc;
+using FootballManager.Models;
 
 namespace FootballManager.Controllers
 {
@@ -21,7 +27,6 @@ namespace FootballManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Check if username or email already exists
                 var exists = db.Accounts.Any(u => u.Username == user.Username || u.Email == user.Email);
                 if (exists)
                 {
@@ -31,6 +36,7 @@ namespace FootballManager.Controllers
 
                 db.Accounts.Add(user);
                 db.SaveChanges();
+
                 ViewBag.Message = "Registration successful!";
                 return RedirectToAction("Login");
             }
@@ -47,7 +53,8 @@ namespace FootballManager.Controllers
         // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(string username, string password)
+      
+        public ActionResult Login(string username, string password, bool rememberMe = false)
         {
             var user = db.Accounts.FirstOrDefault(u => u.Username == username && u.Password == password);
 
@@ -55,6 +62,15 @@ namespace FootballManager.Controllers
             {
                 Session["UserId"] = user.userId;
                 Session["Username"] = user.Username;
+
+                // You can handle 'rememberMe' logic here, like setting a cookie
+                // Example (not secure for real projects):
+                if (rememberMe)
+                {
+                    Response.Cookies["username"].Value = username;
+                    Response.Cookies["username"].Expires = DateTime.Now.AddDays(7);
+                }
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -62,6 +78,8 @@ namespace FootballManager.Controllers
             return View();
         }
 
+
+        // /Account/Logout
         public ActionResult Logout()
         {
             Session.Clear();
