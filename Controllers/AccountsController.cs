@@ -60,7 +60,7 @@ namespace FootballManager.Controllers
 
             if (user != null)
             {
-                Session["UserId"] = user.userId;
+                Session["UserId"] = user.UserId;
                 Session["Username"] = user.Username;
 
                 // You can handle 'rememberMe' logic here, like setting a cookie
