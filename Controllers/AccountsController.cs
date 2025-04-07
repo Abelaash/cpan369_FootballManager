@@ -6,10 +6,12 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using FootballManager.Models;
 
 namespace FootballManager.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private TeamContext db = new TeamContext();
@@ -37,7 +39,7 @@ namespace FootballManager.Controllers
                 db.Accounts.Add(user);
                 db.SaveChanges();
 
-                ViewBag.Message = "Registration successful!";
+                TempData["SuccessMessage"] = "Registration successful! You can now log in.";
                 return RedirectToAction("Login");
             }
 
@@ -53,7 +55,7 @@ namespace FootballManager.Controllers
         // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-      
+
         public ActionResult Login(string username, string password, bool rememberMe = false)
         {
             var user = db.Accounts.FirstOrDefault(u => u.Username == username && u.Password == password);
@@ -63,8 +65,8 @@ namespace FootballManager.Controllers
                 Session["UserId"] = user.UserId;
                 Session["Username"] = user.Username;
 
-                // You can handle 'rememberMe' logic here, like setting a cookie
-                // Example (not secure for real projects):
+                FormsAuthentication.SetAuthCookie(user.Username, rememberMe);
+
                 if (rememberMe)
                 {
                     Response.Cookies["username"].Value = username;
@@ -78,12 +80,27 @@ namespace FootballManager.Controllers
             return View();
         }
 
-
         // /Account/Logout
         public ActionResult Logout()
         {
-            Session.Clear();
+            if (Session["UserId"] != null)
+            {
+                Session.Abandon();
+                FormsAuthentication.SignOut();
+            }
             return RedirectToAction("Login");
+        }
+
+        public ActionResult LoggedIn()
+        {
+            if (Session["UserId"] != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ namespace FootballManager.Controllers
     {
         private TeamContext db = new TeamContext();
 
+        [Authorize]
         public ActionResult Index()
         {
             var players = db.Players.Include(s => s.Team).ToList();

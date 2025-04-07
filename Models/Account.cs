@@ -7,7 +7,7 @@ using System.Web;
 
 namespace FootballManager.Models
 {
-    [Table("Users")]
+    [Table("Usertbl")]
     public class Account
     {
         [Key]
@@ -37,5 +37,7 @@ namespace FootballManager.Models
         [NotMapped]
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
+
+        public string Role { get; set; }
     }
 }

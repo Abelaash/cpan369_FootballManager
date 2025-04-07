@@ -31,7 +31,9 @@
     </div>
 }
 
-@if (ViewBag.Message != null)
+@if (TempData["SuccessMessage"] != null)
 {
-    <div class="text-danger mt-2">@ViewBag.Message</div>
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
 }

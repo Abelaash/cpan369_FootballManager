@@ -8,6 +8,7 @@ using FootballManager.Models;
 
 namespace FootballManager.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private TeamContext db = new TeamContext();

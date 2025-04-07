@@ -19,6 +19,7 @@ namespace FootballManager.Controllers
         private TeamContext db = new TeamContext();
 
         // GET: Teams
+        [Authorize]
         public ActionResult Index()
         {
             return View(db.Teams.ToList());
@@ -115,6 +116,7 @@ namespace FootballManager.Controllers
             return View(team);
         }
 
+        [Authorize(Roles = "Admin")]
         // GET: Teams/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -143,6 +145,7 @@ namespace FootballManager.Controllers
         }
 
         // GET: Teams/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)

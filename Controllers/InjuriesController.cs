@@ -15,6 +15,7 @@ namespace FootballManager.Controllers
         private TeamContext db = new TeamContext();
 
         // GET: Injuries
+        [Authorize]
         public ActionResult Index()
         {
             var injuries = db.Injuries.Include(i => i.Player).Include(i => i.Team).ToList();
