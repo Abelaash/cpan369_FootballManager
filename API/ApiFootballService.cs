@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -86,7 +87,7 @@ namespace FootballManager.API
                     standings.Add(new Team
                     {
                         Name = team.team.name,
-                        LogoUrl = team.team.logo, 
+                        LogoUrl = team.team.logo,
                         Wins = team.all.win,
                         Losses = team.all.lose,
                         Draws = team.all.draw,
@@ -144,6 +145,93 @@ namespace FootballManager.API
 
                 return matches;
             }
+
+        }
+        public async Task<List<Injury>> GetInjuriesByLeagueAndSeason(int leagueId, int season)
+        {
+            using (var context = new TeamContext())
+            using (var client = CreateClient())
+            {
+                var response = await client.GetAsync($"{baseUrl}/injuries?league={leagueId}&season={season}");
+
+                if (!response.IsSuccessStatusCode)
+                    return new List<Injury>();
+
+                var json = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ApiInjuryResponse>(json);
+
+                return result.Response.Select(i =>
+                {
+                    // Attempt to match player by full name
+                    var player = context.Players.FirstOrDefault(p =>
+                        (p.FirstName + " " + p.LastName).Trim().ToLower() == i.Player.Name.Trim().ToLower());
+
+                    // Match team by name
+                    var team = context.Teams.FirstOrDefault(t =>
+                        t.Name.Trim().ToLower() == i.Team.Name.Trim().ToLower());
+
+                    return new Injury
+                    {
+                        PlayerId = player?.PlayerId ?? 0,
+                        TeamId = team?.TeamId ?? 0,
+                        InjuryType = i.Type ?? "Unknown",
+                        Severity = i.Reason ?? "Moderate",
+                        DateInjured = i.Start,
+                        ExpectedRecoveryDate = i.End ?? i.Start.AddDays(14),
+                        Notes = i.Reason
+                    };
+                }).ToList();
+            }
+        }
+
+        public List<ApiCoachDto> GetCoachesByLeague(string leagueName)
+        {
+            var leagueIds = new Dictionary<string, int>
+    {
+        { "Premier League", 39 },
+        { "La Liga", 140 },
+        { "Bundesliga", 78 },
+        { "Ligue 1", 61 },
+        { "Serie A", 135 },
+        { "Eredivisie", 88 }
+    };
+
+            int season = 2024;
+            var coaches = new List<ApiCoachDto>();
+
+            if (!leagueIds.ContainsKey(leagueName))
+                return coaches;
+
+            int leagueId = leagueIds[leagueName];
+            var teams = GetTeamsByLeagueAsync(leagueId, season).Result;
+
+            foreach (var team in teams)
+            {
+                using (var client = CreateClient())
+                {
+                    var url = $"{baseUrl}/coachs?team={team.id}";
+                    var response = client.GetAsync(url).Result;
+
+                    if (!response.IsSuccessStatusCode)
+                        continue;
+
+                    var json = response.Content.ReadAsStringAsync().Result;
+                    var result = JsonConvert.DeserializeObject<ApiCoachResponse>(json);
+
+                    if (result?.response != null && result.response.Count > 0)
+                    {
+                        var coachData = result.response.First(); // Take first coach
+                        coaches.Add(new ApiCoachDto
+                        {
+                            FirstName = coachData.firstname,
+                            LastName = coachData.lastname,
+                            Team = team.name
+                        });
+                    }
+                }
+            }
+
+            return coaches;
         }
     }
 }

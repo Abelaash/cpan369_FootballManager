@@ -5,7 +5,9 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Mvc;
+using FootballManager.API;
 using FootballManager.Models;
 
 namespace FootballManager.Controllers
@@ -16,26 +18,44 @@ namespace FootballManager.Controllers
 
         // GET: Staffs
         [Authorize]
+        [Authorize]
         public ActionResult Index()
         {
-            var staff = db.Staff.Include(s => s.Team).ToList();
-            return View(staff);
+            var service = new ApiFootballService();
+            var leagues = new List<string> { "Premier League" }; // , "La Liga", "Bundesliga", "Ligue 1", "Serie A", "Eredivisie"
+
+            foreach (var league in leagues)
+            {
+                var coaches = service.GetCoachesByLeague(league); // This was missing!
+
+                foreach (var coach in coaches)
+                {
+                    var team = db.Teams.FirstOrDefault(t => t.Name.Trim().ToLower() == coach.Team.Trim().ToLower());
+
+                    if (team != null && !db.Staff.Any(s =>
+                        s.FirstName.Trim().ToLower() == coach.FirstName.Trim().ToLower() &&
+                        s.LastName.Trim().ToLower() == coach.LastName.Trim().ToLower() &&
+                        s.Role == "Coach" &&
+                        s.TeamId == team.TeamId))
+                    {
+                        db.Staff.Add(new Staff
+                        {
+                            FirstName = coach.FirstName,
+                            LastName = coach.LastName,
+                            Role = "Coach",
+                            TeamId = team.TeamId
+                        });
+                    }
+                }
+            }
+
+
+            db.SaveChanges(); // ✅ Moved inside method scope
+
+            var staffList = db.Staff.Include(s => s.Team).ToList();
+            return View(staffList);
         }
 
-        // GET: Staffs/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Staff staff = db.Staff.Find(id);
-            if (staff == null)
-            {
-                return HttpNotFound();
-            }
-            return View(staff);
-        }
 
         // GET: Staffs/Create
         public ActionResult Create()
