@@ -29,16 +29,26 @@ namespace FootballManager.API
                 string url = $"{baseUrl}/teams?league={leagueId}&season={season}";
                 var response = await client.GetStringAsync(url);
                 var result = JsonConvert.DeserializeObject<ApiFootballResponse>(response);
+
                 var teams = new List<ApiTeamModel>();
 
                 foreach (var item in result.response)
                 {
-                    teams.Add(item.team);
+                    teams.Add(new ApiTeamModel
+                    {
+                        id = item.team.id,
+                        name = item.team.name,
+                        code = item.team.code,
+                        country = item.team.country,
+                        logo = item.team.logo,
+                        stadiumName = item.venue?.name
+                    });
                 }
 
                 return teams;
             }
         }
+
 
         public async Task<List<ApiPlayerWrapper>> GetPlayersByTeamAsync(int teamId, int season)
         {
@@ -184,7 +194,7 @@ namespace FootballManager.API
             }
         }
 
-        public List<ApiCoachDto> GetCoachesByLeague(string leagueName)
+        public async Task<List<ApiCoachDto>> GetCoachesByLeagueAsync(string leagueName)
         {
             var leagueIds = new Dictionary<string, int>
     {
@@ -196,35 +206,37 @@ namespace FootballManager.API
         { "Eredivisie", 88 }
     };
 
-            int season = 2024;
             var coaches = new List<ApiCoachDto>();
 
             if (!leagueIds.ContainsKey(leagueName))
                 return coaches;
 
             int leagueId = leagueIds[leagueName];
-            var teams = GetTeamsByLeagueAsync(leagueId, season).Result;
+            int season = 2024;
 
-            foreach (var team in teams)
+            var teams = await GetTeamsByLeagueAsync(leagueId, season);
+
+            using (var client = CreateClient())
             {
-                using (var client = CreateClient())
+                foreach (var team in teams)
                 {
                     var url = $"{baseUrl}/coachs?team={team.id}";
-                    var response = client.GetAsync(url).Result;
+                    var response = await client.GetAsync(url);
 
                     if (!response.IsSuccessStatusCode)
                         continue;
 
-                    var json = response.Content.ReadAsStringAsync().Result;
+                    var json = await response.Content.ReadAsStringAsync();
                     var result = JsonConvert.DeserializeObject<ApiCoachResponse>(json);
 
                     if (result?.response != null && result.response.Count > 0)
                     {
-                        var coachData = result.response.First(); // Take first coach
+                        var coach = result.response.First(); // If there are multiple, take first
+
                         coaches.Add(new ApiCoachDto
                         {
-                            FirstName = coachData.firstname,
-                            LastName = coachData.lastname,
+                            FirstName = coach.firstname,
+                            LastName = coach.lastname,
                             Team = team.name
                         });
                     }
@@ -233,5 +245,6 @@ namespace FootballManager.API
 
             return coaches;
         }
+
     }
 }

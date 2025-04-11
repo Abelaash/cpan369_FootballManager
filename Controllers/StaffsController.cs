@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
 using System.Web.Mvc;
@@ -12,21 +13,20 @@ using FootballManager.Models;
 
 namespace FootballManager.Controllers
 {
-    public class StaffsController : Controller
+    public class StaffsController : AsyncController
     {
         private TeamContext db = new TeamContext();
 
         // GET: Staffs
         [Authorize]
-        [Authorize]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var service = new ApiFootballService();
-            var leagues = new List<string> { "Premier League" }; // , "La Liga", "Bundesliga", "Ligue 1", "Serie A", "Eredivisie"
+            var leagues = new List<string> { "Eredivisie"};
 
             foreach (var league in leagues)
             {
-                var coaches = service.GetCoachesByLeague(league); // This was missing!
+                var coaches = await service.GetCoachesByLeagueAsync(league); // ✅ Await the async call
 
                 foreach (var coach in coaches)
                 {
@@ -49,13 +49,11 @@ namespace FootballManager.Controllers
                 }
             }
 
-
-            db.SaveChanges(); // ✅ Moved inside method scope
+            db.SaveChanges(); // ✅ Save once
 
             var staffList = db.Staff.Include(s => s.Team).ToList();
             return View(staffList);
         }
-
 
         // GET: Staffs/Create
         public ActionResult Create()
@@ -79,7 +77,7 @@ namespace FootballManager.Controllers
             }
 
             ViewBag.TeamId = new SelectList(db.Teams, "TeamId", "Name", staff.TeamId);
- 
+
             return View(staff);
         }
 
