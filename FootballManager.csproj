@@ -159,6 +159,7 @@
     <Compile Include="Models\ApiCoachResponse.cs" />
     <Compile Include="Models\ApiInjuryResponse.cs" />
     <Compile Include="Models\ApiPlayerModel.cs" />
+    <Compile Include="Models\FileUpload.cs" />
     <Compile Include="Models\StandingsApiResponse.cs" />
     <Compile Include="Models\ApiTeamModel.cs" />
     <Compile Include="Models\HomeViewModel.cs" />

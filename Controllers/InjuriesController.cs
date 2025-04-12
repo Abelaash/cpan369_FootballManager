@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using FootballManager.API;
@@ -17,11 +18,40 @@ namespace FootballManager.Controllers
 
         // GET: Injuries
         [Authorize]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var injuries = db.Injuries.Include(i => i.Player).Include(i => i.Team).ToList();
-            return View(injuries);
+            var service = new ApiFootballService();
+            var leagueIds = new List<int> { 39 }; // Premier League, La Liga, etc. 140, 78, 61, 135, 88
+            int season = 2024;
+
+            foreach (var leagueId in leagueIds)
+            {
+                var injuries = await service.GetInjuriesByLeagueAndSeason(leagueId, season);
+
+                foreach (var injury in injuries)
+                {
+                    if(injury.PlayerId == 0 || injury.TeamId == 0)
+                        continue; // Skip unmatched injuries
+                    // Prevent duplicates (same player, team, and date)
+                    bool exists = db.Injuries.Any(i =>
+                        i.PlayerId == injury.PlayerId &&
+                        i.TeamId == injury.TeamId &&
+                        i.DateInjured == injury.DateInjured &&
+                        i.InjuryType == injury.InjuryType);
+
+                    if (!exists)
+                    {
+                        db.Injuries.Add(injury);
+                    }
+                }
+            }
+
+            db.SaveChanges();
+
+            var allInjuries = db.Injuries.Include(i => i.Player).Include(i => i.Team).ToList();
+            return View(allInjuries);
         }
+        
 
         // GET: Injuries/Details/5
         public ActionResult Details(int? id)
