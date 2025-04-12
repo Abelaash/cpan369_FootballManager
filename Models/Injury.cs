@@ -40,9 +40,11 @@ namespace FootballManager.Models
         [CustomValidation(typeof(Injury), "ValidateRecoveryDate")]
         public DateTime ExpectedRecoveryDate { get; set; }
 
-        [Required(ErrorMessage = "Injury type is required")]
+        [Required(ErrorMessage = "Notes are required")]
         [StringLength(100, ErrorMessage = "Notes cannot exceed 100 characters")]
         public string Notes { get; set; }
+
+
 
         public static ValidationResult ValidateRecoveryDate(DateTime expectedRecoveryDate, ValidationContext context)
         {
