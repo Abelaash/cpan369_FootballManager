@@ -50,15 +50,94 @@ namespace FootballManager.API
         }
 
 
-        public async Task<List<ApiPlayerWrapper>> GetPlayersByTeamAsync(int teamId, int season)
+        //public async Task<List<ApiPlayerWrapper>> GetPlayersByTeamAsync(int teamId, int season)
+        //{
+        //    using (var client = CreateClient())
+        //    {
+        //        string url = $"{baseUrl}/players?team={teamId}&season={season}";
+        //        var response = await client.GetStringAsync(url);
+        //        var result = JsonConvert.DeserializeObject<ApiPlayerResponse>(response);
+        //        return result.response;
+        //    }
+        //}
+
+        public async Task<List<Player>> GetPlayersByTeamAsync(int teamId, int season)
         {
-            using (var client = CreateClient())
+            var allPlayers = new List<Player>();
+            int page = 1;
+            bool morePages = true;
+
+            while (morePages)
             {
-                string url = $"{baseUrl}/players?team={teamId}&season={season}";
-                var response = await client.GetStringAsync(url);
-                var result = JsonConvert.DeserializeObject<ApiPlayerResponse>(response);
-                return result.response;
+                string url = $"{baseUrl}/players?team={teamId}&season={season}&page={page}";
+
+                using (var client = CreateClient())
+                {
+                    var responseString = await client.GetStringAsync(url);
+                    var result = JsonConvert.DeserializeObject<ApiPlayerResponse>(responseString);
+
+                    if (result?.response == null || result.response.Count == 0)
+                    {
+                        break; // no more players
+                    }
+
+                    foreach (var wrapper in result.response)
+                    {
+                        var playerData = wrapper.player;
+                        var stats = wrapper.statistics?.FirstOrDefault();
+
+                        var statBlock = stats ?? new ApiPlayerStat();
+                        var league = statBlock.league;
+                        var team = statBlock.team;
+                        var gameStats = statBlock.games;
+                        var shots = statBlock.shots;
+                        var goals = statBlock.goals;
+                        var passes = statBlock.passes;
+
+                        var player = new Player
+                        {
+                            FirstName = playerData.firstname,
+                            LastName = playerData.lastname,
+                            Age = playerData.age,
+                            Nationality = playerData.nationality,
+                            Height = ConvertToDecimal(playerData.height),
+                            Weight = ConvertToDecimal(playerData.weight),
+                            Position = gameStats?.position ?? playerData.position,
+                            TeamName = team?.name,
+                            TeamId = team?.id ?? 0,
+                            LeagueName = league?.name,
+                            TotalGoals = goals?.total ?? 0,
+                            TotalShots = shots?.total ?? 0,
+                            TotalPasses = passes?.total ?? 0
+                        };
+
+                        allPlayers.Add(player);
+                    }
+
+                    if (result.paging != null && result.paging.current < result.paging.total)
+                    {
+                        page++;
+                        await Task.Delay(1000);
+                    }
+                    else
+                    {
+                        morePages = false;
+                    }
+                }
             }
+
+            return allPlayers;
+        }
+
+        private decimal ConvertToDecimal(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return 0;
+            var numberPart = new string(input.Where(char.IsDigit).ToArray());
+            if (decimal.TryParse(numberPart, out decimal result))
+            {
+                return result;
+            }
+            return 0;
         }
 
         public List<Team> GetLeagueStandings(string leagueName)
@@ -96,6 +175,7 @@ namespace FootballManager.API
                 {
                     standings.Add(new Team
                     {
+                        TeamId = team.team.id,
                         Name = team.team.name,
                         LogoUrl = team.team.logo,
                         Wins = team.all.win,

@@ -7,7 +7,7 @@ using System.Web;
 
 namespace FootballManager.Models
 {
-    [Table("Filetbl")]
+    [Table("FileUploadtbl")]
     public class FileUpload
 	{
 		[Key]

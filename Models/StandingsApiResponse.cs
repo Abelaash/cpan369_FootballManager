@@ -29,6 +29,7 @@ namespace FootballManager.Models
 
     public class ApiTeam
     {
+        public int id { get; set; }
         public string name { get; set; }
         public string logo { get; set; }
     }

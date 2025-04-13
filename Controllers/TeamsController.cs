@@ -169,7 +169,6 @@ namespace FootballManager.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ Import Teams from API
         public async Task<ActionResult> ImportFromApi()
         {
             var service = new ApiFootballService();
@@ -184,54 +183,141 @@ namespace FootballManager.Controllers
                 "Eredivisie"
             };
 
-            var importedTeamNames = new HashSet<string>(db.Teams.Select(t => t.Name.ToLower()));
-
             foreach (var leagueName in leagues)
             {
                 var apiTeams = service.GetLeagueStandings(leagueName);
 
                 foreach (var apiTeam in apiTeams)
                 {
+                    // Try to find by team name
                     var existingTeam = db.Teams.FirstOrDefault(t => t.Name.ToLower() == apiTeam.Name.ToLower());
 
                     if (existingTeam != null)
                     {
-                        existingTeam.Wins = apiTeam.Wins;
-                        existingTeam.Losses = apiTeam.Losses;
-                        existingTeam.Draws = apiTeam.Draws;
-                        existingTeam.matches_played = apiTeam.matches_played;
-                        existingTeam.goals_for = apiTeam.goals_for;
-                        existingTeam.goals_against = apiTeam.goals_against;
-                        existingTeam.Points = apiTeam.Points;
-                        existingTeam.LogoUrl = apiTeam.LogoUrl;
-                        existingTeam.League = apiTeam.League;
-                    }
-                    else
-                    {
-                        db.Teams.Add(new Team
+                        // If the TeamId matches, just update fields
+                        if (existingTeam.TeamId == apiTeam.TeamId)
                         {
-                            Name = apiTeam.Name,
-                            City = apiTeam.City ?? "Unknown",
-                            Wins = apiTeam.Wins,
-                            Losses = apiTeam.Losses,
-                            Draws = apiTeam.Draws,
-                            matches_played = apiTeam.matches_played,
-                            goals_for = apiTeam.goals_for,
-                            goals_against = apiTeam.goals_against,
-                            Points = apiTeam.Points,
-                            LogoUrl = apiTeam.LogoUrl,
-                            League = apiTeam.League
-                        });
+                            existingTeam.Wins = apiTeam.Wins;
+                            existingTeam.Losses = apiTeam.Losses;
+                            existingTeam.Draws = apiTeam.Draws;
+                            existingTeam.matches_played = apiTeam.matches_played;
+                            existingTeam.goals_for = apiTeam.goals_for;
+                            existingTeam.goals_against = apiTeam.goals_against;
+                            existingTeam.Points = apiTeam.Points;
+                            existingTeam.LogoUrl = apiTeam.LogoUrl;
+                            existingTeam.League = apiTeam.League;
+                            if (!string.IsNullOrWhiteSpace(apiTeam.City))
+                            {
+                                existingTeam.City = apiTeam.City;
+                            }
+                        }
+                        else
+                        {
+                            // Step 1: Create new team with correct API TeamId
+                            var newTeam = new Team
+                            {
+                                TeamId = apiTeam.TeamId, // API TeamId
+                                Name = existingTeam.Name,
+                                City = apiTeam.City ?? existingTeam.City,
+                                Wins = apiTeam.Wins,
+                                Losses = apiTeam.Losses,
+                                Draws = apiTeam.Draws,
+                                matches_played = apiTeam.matches_played,
+                                goals_for = apiTeam.goals_for,
+                                goals_against = apiTeam.goals_against,
+                                Points = apiTeam.Points,
+                                LogoUrl = apiTeam.LogoUrl,
+                                League = apiTeam.League
+                            };
 
-                        importedTeamNames.Add(apiTeam.Name.ToLower());
+                            db.Teams.Add(newTeam);
+
+                            // Step 2: Update any linked players
+                            var linkedPlayers = db.Players.Where(p => p.TeamId == existingTeam.TeamId).ToList();
+                            foreach (var player in linkedPlayers)
+                            {
+                                player.TeamId = newTeam.TeamId;
+                            }
+
+                            // Step 3: Remove the old team
+                            db.Teams.Remove(existingTeam);
+                        }
                     }
                 }
             }
 
             await db.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Teams updated from API-Football!";
+            TempData["SuccessMessage"] = "Teams successfully synced with API-Football!";
             return RedirectToAction("Index");
         }
+
+
+
+        // ✅ Import Teams from API
+        //public async Task<ActionResult> ImportFromApi()
+        //{
+        //    var service = new ApiFootballService();
+
+        //    var leagues = new List<string>
+        //    {
+        //        "Premier League",
+        //        "La Liga",
+        //        "Bundesliga",
+        //        "Ligue 1",
+        //        "Serie A",
+        //        "Eredivisie"
+        //    };
+
+        //    var importedTeamNames = new HashSet<string>(db.Teams.Select(t => t.Name.ToLower()));
+
+        //    foreach (var leagueName in leagues)
+        //    {
+        //        var apiTeams = service.GetLeagueStandings(leagueName);
+
+        //        foreach (var apiTeam in apiTeams)
+        //        {
+        //            var existingTeam = db.Teams.FirstOrDefault(t => t.Name.ToLower() == apiTeam.Name.ToLower());
+
+        //            if (existingTeam != null)
+        //            {
+        //                existingTeam.TeamId = apiTeam.TeamId;
+        //                existingTeam.Wins = apiTeam.Wins;
+        //                existingTeam.Losses = apiTeam.Losses;
+        //                existingTeam.Draws = apiTeam.Draws;
+        //                existingTeam.matches_played = apiTeam.matches_played;
+        //                existingTeam.goals_for = apiTeam.goals_for;
+        //                existingTeam.goals_against = apiTeam.goals_against;
+        //                existingTeam.Points = apiTeam.Points;
+        //                existingTeam.LogoUrl = apiTeam.LogoUrl;
+        //                existingTeam.League = apiTeam.League;
+        //            }
+        //            else
+        //            {
+        //                db.Teams.Add(new Team
+        //                {
+        //                    TeamId = apiTeam.TeamId,
+        //                    Name = apiTeam.Name,
+        //                    City = apiTeam.City ?? "Unknown",
+        //                    Wins = apiTeam.Wins,
+        //                    Losses = apiTeam.Losses,
+        //                    Draws = apiTeam.Draws,
+        //                    matches_played = apiTeam.matches_played,
+        //                    goals_for = apiTeam.goals_for,
+        //                    goals_against = apiTeam.goals_against,
+        //                    Points = apiTeam.Points,
+        //                    LogoUrl = apiTeam.LogoUrl,
+        //                    League = apiTeam.League
+        //                });
+
+        //                importedTeamNames.Add(apiTeam.Name.ToLower());
+        //            }
+        //        }
+        //    }
+
+        //    await db.SaveChangesAsync();
+        //    TempData["SuccessMessage"] = "Teams updated from API-Football!";
+        //    return RedirectToAction("Index");
+        //}
 
         protected override void Dispose(bool disposing)
         {
