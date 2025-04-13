@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using FootballManager.API;
 using FootballManager.Models;
-using Newtonsoft.Json;
 
 namespace FootballManager.Controllers
 {
@@ -25,7 +22,7 @@ namespace FootballManager.Controllers
             return View(db.Teams.ToList());
         }
 
-
+        // GET: Teams/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -38,8 +35,10 @@ namespace FootballManager.Controllers
             var upcomingMatches = db.Matches
                 .Include(m => m.HomeTeam)
                 .Include(m => m.AwayTeam)
-                .Where(m => m.Status == "Upcoming" &&
-                       (m.HomeTeamId == team.TeamId || m.AwayTeamId == team.TeamId))
+                .Where(m =>
+                    m.Status == "Upcoming" &&
+                    m.MatchDate > DateTime.UtcNow &&
+                    (m.HomeTeamId == team.TeamId || m.AwayTeamId == team.TeamId))
                 .OrderBy(m => m.MatchDate)
                 .ToList();
 
@@ -55,51 +54,8 @@ namespace FootballManager.Controllers
             return View(viewModel);
         }
 
-
-        public async Task<ActionResult> ImportFixturesFromApi()
-        {
-            var service = new ApiFootballService();
-            var leagues = new List<string> { "Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1", "Eredivisie" };
-
-            foreach (var league in leagues)
-            {
-                var fixtures = service.GetUpcomingMatches(league);
-
-                foreach (var fixture in fixtures)
-                {
-                    var homeTeam = db.Teams.FirstOrDefault(t => t.Name == fixture.HomeTeamName);
-                    var awayTeam = db.Teams.FirstOrDefault(t => t.Name == fixture.AwayTeamName);
-
-                    if (homeTeam != null && awayTeam != null && !db.Matches.Any(m =>
-                        m.HomeTeamId == homeTeam.TeamId &&
-                        m.AwayTeamId == awayTeam.TeamId &&
-                        m.MatchDate == fixture.MatchDate))
-                    {
-                        fixture.HomeTeamId = homeTeam.TeamId;
-                        fixture.AwayTeamId = awayTeam.TeamId;
-                        fixture.Status = "Upcoming";
-                        db.Matches.Add(fixture);
-                    }
-                }
-            }
-
-            await db.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Fixtures imported successfully!";
-            return RedirectToAction("Index");
-        }
-
-
-
-
-
-
-
-
         // GET: Teams/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+        public ActionResult Create() => View();
 
         // POST: Teams/Create
         [HttpPost]
@@ -112,22 +68,17 @@ namespace FootballManager.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
             return View(team);
         }
 
-        [Authorize(Roles = "Admin")]
         // GET: Teams/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Team team = db.Teams.Find(id);
-            if (team == null)
-                return HttpNotFound();
-
-            return View(team);
+            var team = db.Teams.Find(id);
+            return team == null ? HttpNotFound() : (ActionResult)View(team);
         }
 
         // POST: Teams/Edit/5
@@ -148,14 +99,10 @@ namespace FootballManager.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Team team = db.Teams.Find(id);
-            if (team == null)
-                return HttpNotFound();
-
-            return View(team);
+            var team = db.Teams.Find(id);
+            return team == null ? HttpNotFound() : (ActionResult)View(team);
         }
 
         // POST: Teams/Delete/5
@@ -163,161 +110,53 @@ namespace FootballManager.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Team team = db.Teams.Find(id);
+            var team = db.Teams.Find(id);
             db.Teams.Remove(team);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> ImportFromApi()
+        // Import Fixtures from API
+        public async Task<ActionResult> ImportFixturesFromApi()
         {
             var service = new ApiFootballService();
+            var leagues = new List<string> { "Premier League", "La Liga", "Serie A", "Bundesliga", "Ligue 1", "Eredivisie" };
 
-            var leagues = new List<string>
+            foreach (var league in leagues)
             {
-                "Premier League",
-                "La Liga",
-                "Bundesliga",
-                "Ligue 1",
-                "Serie A",
-                "Eredivisie"
-            };
+                var fixtures = service.GetUpcomingMatches(league);
 
-            foreach (var leagueName in leagues)
-            {
-                var apiTeams = service.GetLeagueStandings(leagueName);
-
-                foreach (var apiTeam in apiTeams)
+                foreach (var fixture in fixtures)
                 {
-                    // Try to find by team name
-                    var existingTeam = db.Teams.FirstOrDefault(t => t.Name.ToLower() == apiTeam.Name.ToLower());
+                    // Skip past or invalid match
+                    if (fixture.MatchDate <= DateTime.UtcNow) continue;
 
-                    if (existingTeam != null)
+                    var homeTeam = db.Teams.FirstOrDefault(t => t.Name == fixture.HomeTeamName);
+                    var awayTeam = db.Teams.FirstOrDefault(t => t.Name == fixture.AwayTeamName);
+
+                    if (homeTeam == null || awayTeam == null) continue;
+
+                    bool alreadyExists = db.Matches.Any(m =>
+                        m.HomeTeamId == homeTeam.TeamId &&
+                        m.AwayTeamId == awayTeam.TeamId &&
+                        m.MatchDate == fixture.MatchDate);
+
+                    if (!alreadyExists)
                     {
-                        // If the TeamId matches, just update fields
-                        if (existingTeam.TeamId == apiTeam.TeamId)
-                        {
-                            existingTeam.Wins = apiTeam.Wins;
-                            existingTeam.Losses = apiTeam.Losses;
-                            existingTeam.Draws = apiTeam.Draws;
-                            existingTeam.matches_played = apiTeam.matches_played;
-                            existingTeam.goals_for = apiTeam.goals_for;
-                            existingTeam.goals_against = apiTeam.goals_against;
-                            existingTeam.Points = apiTeam.Points;
-                            existingTeam.LogoUrl = apiTeam.LogoUrl;
-                            existingTeam.League = apiTeam.League;
-                            if (!string.IsNullOrWhiteSpace(apiTeam.City))
-                            {
-                                existingTeam.City = apiTeam.City;
-                            }
-                        }
-                        else
-                        {
-                            // Step 1: Create new team with correct API TeamId
-                            var newTeam = new Team
-                            {
-                                TeamId = apiTeam.TeamId, // API TeamId
-                                Name = existingTeam.Name,
-                                City = apiTeam.City ?? existingTeam.City,
-                                Wins = apiTeam.Wins,
-                                Losses = apiTeam.Losses,
-                                Draws = apiTeam.Draws,
-                                matches_played = apiTeam.matches_played,
-                                goals_for = apiTeam.goals_for,
-                                goals_against = apiTeam.goals_against,
-                                Points = apiTeam.Points,
-                                LogoUrl = apiTeam.LogoUrl,
-                                League = apiTeam.League
-                            };
+                        fixture.HomeTeamId = homeTeam.TeamId;
+                        fixture.AwayTeamId = awayTeam.TeamId;
+                        fixture.Status = "Upcoming";
 
-                            db.Teams.Add(newTeam);
-
-                            // Step 2: Update any linked players
-                            var linkedPlayers = db.Players.Where(p => p.TeamId == existingTeam.TeamId).ToList();
-                            foreach (var player in linkedPlayers)
-                            {
-                                player.TeamId = newTeam.TeamId;
-                            }
-
-                            // Step 3: Remove the old team
-                            db.Teams.Remove(existingTeam);
-                        }
+                        db.Matches.Add(fixture);
+                        System.Diagnostics.Debug.WriteLine($"✔ Imported: {homeTeam.Name} vs {awayTeam.Name} on {fixture.MatchDate}");
                     }
                 }
             }
 
             await db.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Teams successfully synced with API-Football!";
+            TempData["SuccessMessage"] = "Fixtures imported successfully!";
             return RedirectToAction("Index");
         }
-
-
-
-        // ✅ Import Teams from API
-        //public async Task<ActionResult> ImportFromApi()
-        //{
-        //    var service = new ApiFootballService();
-
-        //    var leagues = new List<string>
-        //    {
-        //        "Premier League",
-        //        "La Liga",
-        //        "Bundesliga",
-        //        "Ligue 1",
-        //        "Serie A",
-        //        "Eredivisie"
-        //    };
-
-        //    var importedTeamNames = new HashSet<string>(db.Teams.Select(t => t.Name.ToLower()));
-
-        //    foreach (var leagueName in leagues)
-        //    {
-        //        var apiTeams = service.GetLeagueStandings(leagueName);
-
-        //        foreach (var apiTeam in apiTeams)
-        //        {
-        //            var existingTeam = db.Teams.FirstOrDefault(t => t.Name.ToLower() == apiTeam.Name.ToLower());
-
-        //            if (existingTeam != null)
-        //            {
-        //                existingTeam.TeamId = apiTeam.TeamId;
-        //                existingTeam.Wins = apiTeam.Wins;
-        //                existingTeam.Losses = apiTeam.Losses;
-        //                existingTeam.Draws = apiTeam.Draws;
-        //                existingTeam.matches_played = apiTeam.matches_played;
-        //                existingTeam.goals_for = apiTeam.goals_for;
-        //                existingTeam.goals_against = apiTeam.goals_against;
-        //                existingTeam.Points = apiTeam.Points;
-        //                existingTeam.LogoUrl = apiTeam.LogoUrl;
-        //                existingTeam.League = apiTeam.League;
-        //            }
-        //            else
-        //            {
-        //                db.Teams.Add(new Team
-        //                {
-        //                    TeamId = apiTeam.TeamId,
-        //                    Name = apiTeam.Name,
-        //                    City = apiTeam.City ?? "Unknown",
-        //                    Wins = apiTeam.Wins,
-        //                    Losses = apiTeam.Losses,
-        //                    Draws = apiTeam.Draws,
-        //                    matches_played = apiTeam.matches_played,
-        //                    goals_for = apiTeam.goals_for,
-        //                    goals_against = apiTeam.goals_against,
-        //                    Points = apiTeam.Points,
-        //                    LogoUrl = apiTeam.LogoUrl,
-        //                    League = apiTeam.League
-        //                });
-
-        //                importedTeamNames.Add(apiTeam.Name.ToLower());
-        //            }
-        //        }
-        //    }
-
-        //    await db.SaveChangesAsync();
-        //    TempData["SuccessMessage"] = "Teams updated from API-Football!";
-        //    return RedirectToAction("Index");
-        //}
 
         protected override void Dispose(bool disposing)
         {

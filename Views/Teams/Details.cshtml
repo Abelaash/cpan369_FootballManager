@@ -83,34 +83,54 @@
     </div>
 
 
+
     <!-- Squad Tab -->
     <div class="tab-pane fade" id="squad" role="tabpanel">
         @if (Model.Squad.Any())
         {
-            <ul class="list-group mt-3">
+            <div class="row mt-3">
                 @foreach (var player in Model.Squad)
                 {
-                    <li class="list-group-item">
-                        <strong>@player.FirstName @player.LastName</strong> - @player.Position
-                    </li>
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card shadow text-center h-100 border-0">
+                            <img src="@player.PhotoUrl" alt="@player.FirstName" style="height:100px; width:auto;" />
+
+
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">@player.FirstName @player.LastName</h5>
+                                <p class="text-muted mb-1">@player.Position</p>
+                                <p class="mb-1"><strong>Nationality:</strong> @player.Nationality</p>
+                                <p class="mb-1"><strong>Age:</strong> @player.Age</p>
+                                <p class="mb-1"><strong>Appearances:</strong> @player.Appearances</p>
+                                <p class="mb-1"><strong>Goals:</strong> @player.TotalGoals</p>
+                                <p class="mb-1"><strong>Assists:</strong> @player.Assists</p>
+                                <a href="@Url.Action("Details", "Players", new { id = player.PlayerId })" class="btn btn-primary btn-sm mt-2">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
                 }
-            </ul>
+            </div>
         }
         else
         {
-            <p>No players found for this team.</p>
+            <p class="text-muted mt-3">No players found for this team.</p>
         }
     </div>
-</div>
 
-@section Scripts {
-    <script>
-        // Activate Bootstrap tabs properly
-        $(function () {
-            $('a[data-toggle="tab"]').on('click', function (e) {
-                e.preventDefault();
-                $(this).tab('show');
+
+    @section Scripts {
+        <script>
+            $(function () {
+                // Force the stats tab to load by default (even if URL has a hash)
+                $('#teamTab a[href="#stats"]').tab('show');
+
+                // Optional: Enable manual tab switching again
+                $('a[data-toggle="tab"]').on('click', function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
             });
-        });
-    </script>
-}
+        </script>
+    }
+
+

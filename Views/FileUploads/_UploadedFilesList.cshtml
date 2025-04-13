@@ -1,0 +1,13 @@
+﻿@model IEnumerable<FootballManager.Models.FileUpload>
+
+@foreach (var item in Model)
+{
+    <tr data-id="@item.FileId">
+        <td>@item.FileName</td>
+        <td>@item.UploadDate.ToShortDateString()</td>
+        <td>
+            <a href="@Url.Action("Download", "FileUploads", new { id = item.FileId })">Download</a> |
+            <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+        </td>
+    </tr>
+}

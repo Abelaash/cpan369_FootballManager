@@ -1,0 +1,71 @@
+﻿@model IEnumerable<FootballManager.Models.FileUpload>
+
+@{
+    ViewBag.Title = "File Upload";
+}
+
+<h2>Upload File</h2>
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" />
+    <button type="submit">Upload</button>
+</form>
+
+<div id="resultMessage" class="mt-2 text-success font-weight-bold"></div>
+
+<hr />
+
+<h3>Uploaded Files</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="fileList">
+        @Html.Partial("_UploadedFilesList", Model)
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $("#uploadForm").on("submit", function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            $.ajax({
+                url: '@Url.Action("Upload", "FileUploads")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (html) {
+                    $('#fileList').html(html);
+                    $('#fileInput').val('');
+                    $('#resultMessage').text("File uploaded successfully!");
+                },
+                error: function (xhr) {
+                    $('#resultMessage').text("Upload failed: " + (xhr.responseText || "Unknown error."));
+                }
+            });
+        });
+
+        $(document).on("click", ".delete-btn", function () {
+            var row = $(this).closest("tr");
+            var id = row.data("id");
+
+    if (confirm("Are you sure you want to delete this file?")) {
+        $.post('@Url.Action("Delete", "FileUploads")', { id: id }, function (res) {
+            if (res.success) {
+                row.remove();
+                $('#resultMessage').text("File deleted successfully!");
+            } else {
+                $('#resultMessage').text("Error " + res.message);
+            }
+        });
+    }
+});
+    </script>
+}

@@ -146,6 +146,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Controllers\FileUploadsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InjuriesController.cs" />
     <Compile Include="Controllers\MyRoleProvider.cs" />
@@ -282,8 +283,16 @@
     <Content Include="Scripts\jquery-3.7.1.min.map" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\FileUploads\Create.cshtml" />
+    <Content Include="Views\FileUploads\Delete.cshtml" />
+    <Content Include="Views\FileUploads\Details.cshtml" />
+    <Content Include="Views\FileUploads\Edit.cshtml" />
+    <Content Include="Views\FileUploads\Index.cshtml" />
+    <Content Include="Views\FileUploads\Upload.cshtml" />
+    <Content Include="Views\FileUploads\_UploadedFilesList.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="UploadedFiles\" />
     <Folder Include="Views\MyRoleProvider\" />
   </ItemGroup>
   <ItemGroup>

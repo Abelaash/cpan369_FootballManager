@@ -26,6 +26,7 @@ namespace FootballManager.Models
         public string height { get; set; }
         public string weight { get; set; }
         public string photo { get; set; }
+        public ApiPlayerStat statistics { get; set; }
     }
 
     public class ApiPlayerStat

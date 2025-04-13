@@ -51,5 +51,8 @@ namespace FootballManager.Models
         public int TotalShots { get; set; }
 
         public int TotalPasses { get; set; }
+        public int Assists { get; set; }
+        public int Appearances { get; set; }
+        public string PhotoUrl { get; set; }
     }
 }
