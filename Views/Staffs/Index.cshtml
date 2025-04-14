@@ -5,23 +5,6 @@
     var selectedLeague = ViewBag.SelectedLeague as string;
 }
 
-@*<div class="container-fluid py-5">
-    <div class="row justify-content-center g-3 px-4">
-        @foreach (var league in ViewBag.LeagueList as List<FootballManager.Models.LeagueOption>)
-        {
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-                <button type="button"
-                        class="btn btn-outline-primary w-100 py-3 league-btn @(league.Name == selectedLeague ? "active shadow-lg" : "")"
-                        data-league="@league.Name"
-                        style="font-size: 1.25rem; display: flex; align-items: center; justify-content: center;">
-                    <img src="@league.LogoUrl" alt="@league.Name Logo" width="30" height="30" class="mr-2" />
-                    <span>@league.Name</span>
-                </button>
-            </div>
-        }
-    </div>
-</div>*@
-
 <p>
     @Html.ActionLink("Create New Staff", "Create", null, new { @class = "btn btn-success" })
 </p>

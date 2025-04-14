@@ -25,7 +25,7 @@ namespace FootballManager.Controllers
                 .Where(p => p.Team.Name == defaultTeam)
                 .ToList();
 
-            ViewBag.LeagueList = GetLeagueList(); // Same as your existing list
+            ViewBag.LeagueList = GetLeagueList();
             ViewBag.SelectedLeague = defaultLeague;
             ViewBag.TeamList = GetTeamsByLeague(defaultLeague);
             ViewBag.SelectedTeam = defaultTeam;
@@ -33,6 +33,7 @@ namespace FootballManager.Controllers
             return View(players);
         }
 
+        // get teams based on the selected league
         [HttpGet]
         public JsonResult GetTeams(string leagueName)
         {
@@ -40,6 +41,7 @@ namespace FootballManager.Controllers
             return Json(teams, JsonRequestBehavior.AllowGet);
         }
 
+        // return players based on the selected team
         [HttpGet]
         public PartialViewResult GetPlayers(string teamName)
         {
@@ -50,6 +52,7 @@ namespace FootballManager.Controllers
             return PartialView("_PlayerTablePartial", players);
         }
 
+        // list of league + their url to use in the league buttons
         private List<LeagueOption> GetLeagueList()
         {
             return new List<LeagueOption>
@@ -155,6 +158,7 @@ namespace FootballManager.Controllers
             return RedirectToAction("Index");
         }
 
+        // takes a list of team ids and season year to import players from the API
         public async Task<ActionResult> ImportMultipleTeamsFromApi()
         {
             var apiTeamIds = new List<int> { 33, 34, 35, 36, 39, 40, 41, 42, 45, 46, 47, 48, 49, 50, 51, 52, 55, 57, 65, 66 };
@@ -170,6 +174,7 @@ namespace FootballManager.Controllers
             return RedirectToAction("Index");
         }
 
+        // loop through the list of team ids and import players from the API
         private async Task ImportSingleTeamFromApi(int apiTeamId, int season)
         {
             var service = new ApiFootballService();

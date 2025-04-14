@@ -48,7 +48,7 @@ namespace FootballManager.Controllers
 
 
             var updatedList = db.UploadedFiles.OrderByDescending(f => f.UploadDate).ToList();
-            return PartialView("_UploadedFilesList", updatedList); // ✅ Partial only!
+            return PartialView("_UploadedFilesList", updatedList);
 
         }
 
@@ -66,13 +66,7 @@ namespace FootballManager.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(int id)
         {
-            System.Diagnostics.Debug.WriteLine("Delete called for file ID: " + id); // 👈 for debug
-
-           // if (Session["UserId"] == null)
-               // return Json(new { success = false, message = "Unauthorized access." });
-
-          //  if (Session["Role"]?.ToString() != "Admin")
-              //  return Json(new { success = false, message = "Insufficient permissions." });
+            System.Diagnostics.Debug.WriteLine("Delete called for file ID: " + id);
 
             var file = await db.UploadedFiles.FindAsync(id);
             if (file == null)

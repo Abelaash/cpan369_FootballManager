@@ -67,39 +67,13 @@ namespace FootballManager.Controllers
             return View(teamsByLeague);
         }
 
+        // get league details for a specific league
         public ActionResult LeagueDetails(string league)
         {
             List<Team> leagueTeams;
             List<Match> upcoming;
 
             var apiLeagues = new List<string> { "Premier League", "La Liga", "Bundesliga", "Ligue 1", "Serie A", "Eredivisie" };
-
-            //if (apiLeagues.Contains(league))
-            //{
-            
-            //    var apiService = new ApiFootballService(); // Create this class
-            //    leagueTeams = apiService.GetLeagueStandings(league); // <-- This fetches the API standings
-            //    upcoming = apiService.GetUpcomingMatches(league);     // <-- Fetches upcoming API matches
-            //}
-            //else
-            //{
-            //    // Use local DB
-            //    leagueTeams = db.Teams
-            //        .Where(t => t.League.ToLower() == league.ToLower())
-            //        .OrderByDescending(t => t.Points)
-            //        .ThenByDescending(t => t.goals_for)
-            //        .ToList();
-
-            //    upcoming = db.Matches
-            //        .Include(m => m.HomeTeam)
-            //        .Include(m => m.AwayTeam)
-            //        .Where(m => m.Status == "Upcoming" &&
-            //               (m.HomeTeam.League.ToLower() == league.ToLower() ||
-            //                m.AwayTeam.League.ToLower() == league.ToLower()))
-            //        .OrderBy(m => m.MatchDate)
-            //        .Take(5)
-            //        .ToList();
-            //}
 
             var apiService = new ApiFootballService();
 
@@ -126,6 +100,7 @@ namespace FootballManager.Controllers
             return View("~/Views/Staffs/Index.cshtml");
         }
 
+        // search suggestions for players and teams
         [HttpGet]
         public JsonResult Search(string query)
         {

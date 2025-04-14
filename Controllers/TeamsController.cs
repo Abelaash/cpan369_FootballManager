@@ -33,6 +33,7 @@ namespace FootballManager.Controllers
             return PartialView("_TeamTablePartial", teams);
         }
 
+        // list of league + their url to use in the league buttons
         private List<LeagueOption> GetLeagueList()
         {
             return new List<LeagueOption>

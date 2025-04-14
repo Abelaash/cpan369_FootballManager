@@ -141,7 +141,7 @@ namespace FootballManager.API
             }
         }
 
-        // ✅ UPCOMING MATCHES
+        // UPCOMING MATCHES
         public List<Match> GetUpcomingMatches(string leagueName)
         {
             var leagueMap = new Dictionary<string, int>
@@ -196,7 +196,7 @@ namespace FootballManager.API
             }
         }
 
-        // ✅ INJURIES
+        //  INJURIES
         public async Task<List<Injury>> GetInjuriesByLeagueAndSeason(int leagueId, int season)
         {
             using (var context = new TeamContext())
@@ -232,7 +232,7 @@ namespace FootballManager.API
             }
         }
 
-        // ✅ COACHES
+        // COACHES
         public async Task<List<ApiCoachDto>> GetCoachesByLeagueAsync(string leagueName)
         {
             var leagueIds = new Dictionary<string, int>
@@ -275,6 +275,7 @@ namespace FootballManager.API
             return coaches;
         }
 
+        // Method to get the API ID for a team based on its name
         public int GetApiTeamId(string teamName)
         {
             if (TeamNameToApiId.TryGetValue(teamName, out int apiId))
@@ -283,6 +284,7 @@ namespace FootballManager.API
             throw new Exception($"API ID for team '{teamName}' not found. Please update TeamNameToApiId mapping.");
         }
 
+        // dictionary for mapping API IDs to local Team IDs
         private static readonly Dictionary<string, int> TeamNameToApiId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
         {
             // Premier League Teams
