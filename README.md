@@ -70,5 +70,5 @@ All these concepts were applied in this Football Manager application to build a 
 Need to add screenshots
 
 ## 👤 Collaborators
-**Abelaash Giritharan - N01285813**
-**Miguel Sevilla - N01515417**
+- **Abelaash Giritharan - N01285813**
+- **Miguel Sevilla - N01515417**
