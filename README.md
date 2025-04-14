@@ -67,9 +67,13 @@ All these concepts were applied in this Football Manager application to build a 
 - **API-FOOTBALL**
 
 ### 📷 Screenshots of the Project
-<p align="center">
-  <img src="Content/Images/HomePage.png" width="600">
-</p>
+<img src="Content/Images/HomePage.png" width="600">
+<img src="Content/Images/TeamSectionPL.png" width="600">
+<img src="Content/Images/TeamSectionLL.png" width="600">
+<img src="Content/Images/TeamStats.png" width="600">
+<img src="Content/Images/TeamFixtures.png" width="600">
+<img src="Content/Images/TeamSquad.png" width="600">
+<img src="Content/Images/PlayerDetails.png" width="600">
 
 ## 👤 Collaborators
 - **Abelaash Giritharan - N01285813**
