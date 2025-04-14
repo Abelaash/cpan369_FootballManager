@@ -67,13 +67,42 @@ All these concepts were applied in this Football Manager application to build a 
 - **API-FOOTBALL**
 
 ### 📷 Screenshots of the Project
-<img src="Content/Images/HomePage.png" width="600">
-<img src="Content/Images/TeamSectionPL.png" width="600">
-<img src="Content/Images/TeamSectionLL.png" width="600">
-<img src="Content/Images/TeamStats.png" width="600">
-<img src="Content/Images/TeamFixtures.png" width="600">
-<img src="Content/Images/TeamSquad.png" width="600">
-<img src="Content/Images/PlayerDetails.png" width="600">
+### 📷 Screenshots of the Project
+
+<p align="center">
+  <img src="Content/Images/HomePage.png" width="600" alt="Home Page"/>
+</p>
+
+<p align="center">
+  <img src="Content/Images/TeamSectionPL.png" width="600" alt="Premier League Team Section"/>
+  <br/><em>Premier League Team View</em>
+</p>
+
+<p align="center">
+  <img src="Content/Images/TeamSectionLL.png" width="600" alt="La Liga Team Section"/>
+  <br/><em>La Liga Team View</em>
+</p>
+
+<p align="center">
+  <img src="Content/Images/TeamStats.png" width="600" alt="Team Stats"/>
+  <br/><em>Team Stats View</em>
+</p>
+
+<p align="center">
+  <img src="Content/Images/TeamFixtures.png" width="600" alt="Team Fixtures"/>
+  <br/><em>Upcoming Fixtures</em>
+</p>
+
+<p align="center">
+  <img src="Content/Images/TeamSquad.png" width="600" alt="Team Squad"/>
+  <br/><em>Squad Tab - Player Cards</em>
+</p>
+
+<p align="center">
+  <img src="Content/Images/PlayerDetails.png" width="600" alt="Player Details"/>
+  <br/><em>Player Details Page</em>
+</p>
+
 
 ## 👤 Collaborators
 - **Abelaash Giritharan - N01285813**
