@@ -15,21 +15,61 @@ namespace FootballManager.Controllers
         private TeamContext db = new TeamContext();
 
         [Authorize]
-        public ActionResult Index(string leagueName)
+        public ActionResult Index()
         {
-            var players = db.Players.Include(p => p.Team);
+            string defaultLeague = "Premier League";
+            string defaultTeam = "Manchester United";
 
-            if (!string.IsNullOrEmpty(leagueName))
+            var players = db.Players
+                .Include(p => p.Team)
+                .Where(p => p.Team.Name == defaultTeam)
+                .ToList();
+
+            ViewBag.LeagueList = GetLeagueList(); // Same as your existing list
+            ViewBag.SelectedLeague = defaultLeague;
+            ViewBag.TeamList = GetTeamsByLeague(defaultLeague);
+            ViewBag.SelectedTeam = defaultTeam;
+
+            return View(players);
+        }
+
+        [HttpGet]
+        public JsonResult GetTeams(string leagueName)
+        {
+            var teams = GetTeamsByLeague(leagueName);
+            return Json(teams, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public PartialViewResult GetPlayers(string teamName)
+        {
+            var players = db.Players.Include(p => p.Team)
+                .Where(p => p.Team.Name == teamName)
+                .ToList();
+
+            return PartialView("_PlayerTablePartial", players);
+        }
+
+        private List<LeagueOption> GetLeagueList()
+        {
+            return new List<LeagueOption>
             {
-                players = players.Where(p => p.Team.League == leagueName);
-            }
+                new LeagueOption { Name = "Premier League", LogoUrl = "https://media-4.api-sports.io/football/leagues/39.png" },
+                new LeagueOption { Name = "La Liga", LogoUrl = "https://media-4.api-sports.io/football/leagues/140.png" },
+                new LeagueOption { Name = "Bundesliga", LogoUrl = "https://media-4.api-sports.io/football/leagues/78.png" },
+                new LeagueOption { Name = "Serie A", LogoUrl = "https://media-4.api-sports.io/football/leagues/135.png" },
+                new LeagueOption { Name = "Ligue 1", LogoUrl = "https://media-4.api-sports.io/football/leagues/61.png" },
+                new LeagueOption { Name = "Eredivisie", LogoUrl = "https://media-4.api-sports.io/football/leagues/88.png" },
+            };
+        }
 
-            ViewBag.LeagueName = new SelectList(new List<string>
-            {
-                "Premier League", "La Liga", "Bundesliga", "Ligue 1", "Serie A", "Eredivisie"
-            }, leagueName);
-
-            return View(players.ToList());
+        private List<string> GetTeamsByLeague(string leagueName)
+        {
+            return db.Teams
+                .Where(t => t.League == leagueName)
+                .OrderBy(t => t.Name)
+                .Select(t => t.Name)
+                .ToList();
         }
 
         public ActionResult Details(int? id)
@@ -117,7 +157,7 @@ namespace FootballManager.Controllers
 
         public async Task<ActionResult> ImportMultipleTeamsFromApi()
         {
-            var apiTeamIds = new List<int> { 157, 168, 169, 173, 164, 160, 163, 165, 170, 172, 162, 161, 182, 167, 186, 180, 176, 191 };
+            var apiTeamIds = new List<int> { 33, 34, 35, 36, 39, 40, 41, 42, 45, 46, 47, 48, 49, 50, 51, 52, 55, 57, 65, 66 };
             int season = 2024;
 
             foreach (var teamId in apiTeamIds)

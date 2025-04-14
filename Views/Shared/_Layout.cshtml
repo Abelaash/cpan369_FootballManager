@@ -34,6 +34,22 @@
             background-position: center center;
         }
 
+        .league-btn:hover {
+            background-color: #00529F !important;
+            color: white !important;
+            transform: scale(1.02);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .league-btn.active {
+            background-color: #00529F !important;
+            color: white !important;
+        }
+
+        .league-btn img {
+            margin-right: 10px;
+        }
+
         .navbar-brand {
             font-size: 24px;
             font-weight: bold;
@@ -178,7 +194,7 @@
         </div>
     </nav>
 
-    <div class="main-content container">
+    <div class="main-content container-fluid">
         @RenderBody()
         <hr />
     </div>

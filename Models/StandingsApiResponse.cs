@@ -48,4 +48,10 @@ namespace FootballManager.Models
         public int @for { get; set; }
         public int against { get; set; }
     }
+
+    public class LeagueOption
+    {
+        public string Name { get; set; }
+        public string LogoUrl { get; set; }
+    }
 }

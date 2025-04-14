@@ -1,19 +1,39 @@
 ﻿@model IEnumerable<FootballManager.Models.Player>
-
 @{
     ViewBag.Title = "Players";
+    var selectedTeam = ViewBag.SelectedTeam as string;
+    var selectedLeague = ViewBag.SelectedLeague as string;
 }
 
-<h2>Players</h2>
+<!-- League Buttons -->
+<div class="container-fluid py-5">
+    <div class="row justify-content-center g-3 px-4">
+        @foreach (var league in ViewBag.LeagueList as List<FootballManager.Models.LeagueOption>)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                <button type="button"
+                        class="btn btn-outline-primary w-100 py-3 league-btn @(league.Name == selectedLeague ? "active shadow-lg" : "")"
+                        data-league="@league.Name"
+                        style="font-size: 1.25rem; display: flex; align-items: center; justify-content: center;">
+                    <img src="@league.LogoUrl" alt="@league.Name Logo" width="30" height="30" class="mr-2" />
+                    <span>@league.Name</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
 
-<form method="get" action="@Url.Action("Index", "Players")" class="form-inline mb-3">
-    <label for="leagueName">Filter by League:</label>
-    @Html.DropDownList("leagueName", (SelectList)ViewBag.LeagueName, "All Leagues", new
-    {
-        @class = "form-control ml-2 mr-2",
-        onchange = "this.form.submit();"
-    })
-</form>
+<!-- Team Dropdown -->
+<div class="container-fluid mt-5 mb-4 d-flex justify-content-center">
+    <select id="teamDropdown"
+            class="form-control form-control-lg shadow-sm border-primary"
+            style="max-width: 400px; font-size: 1.2rem;">
+        @foreach (var team in ViewBag.TeamList as List<string>)
+        {
+            <option value="@team" @(team == selectedTeam ? "selected" : "")>@team</option>
+        }
+    </select>
+</div>
 
 <!-- Top action buttons -->
 <p>
@@ -27,55 +47,44 @@
 }
 
 
-<table class="table table-hover table-bordered align-middle text-center shadow-sm bg-white rounded">
-    <thead class="thead-dark bg-dark text-white">
-        <tr>
-            <th>First</th>
-            <th>Last</th>
-            <th>Position</th>
-            <th>Nationality</th>
-            <th>Age</th>
-            <th>Height</th>
-            <th>Weight</th>
-            <th>Goals</th>
-            <th>Shots</th>
-            <th>Passes</th>
-            <th>Team</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
-                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Position)</td>
-                <td>@Html.DisplayFor(modelItem => item.Nationality)</td>
-                <td>@Html.DisplayFor(modelItem => item.Age)</td>
-                <td>@Html.DisplayFor(modelItem => item.Height)</td>
-                <td>@Html.DisplayFor(modelItem => item.Weight)</td>
-                <td>@Html.DisplayFor(modelItem => item.TotalGoals)</td>
-                <td>@Html.DisplayFor(modelItem => item.TotalShots)</td>
-                <td>@Html.DisplayFor(modelItem => item.TotalPasses)</td>
-                <td>
-                    <div class="d-flex align-items-center justify-content-center">
-                        @if (!string.IsNullOrEmpty(item.Team?.LogoUrl))
-                        {
-                            <img src="@item.Team.LogoUrl" alt="Logo" width="24" height="24" class="mr-2" style="object-fit: contain;" />
-                        }
-                        @Html.ActionLink(item.Team?.Name ?? "Unknown", "Details", "Teams", new { id = item.TeamId }, new { @class = "ml-1" })
-                    </div>
-                </td>
-                <td>
-                    <div class="btn-group btn-group-sm" role="group">
-                        @Html.ActionLink("Edit", "Edit", new { id = item.PlayerId }, new { @class = "btn btn-outline-primary" })
-                        @Html.ActionLink("Details", "Details", new { id = item.PlayerId }, new { @class = "btn btn-outline-secondary" })
-                        @Html.ActionLink("Delete", "Delete", new { id = item.PlayerId }, new { @class = "btn btn-outline-danger" })
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div id="playersTable">
+    @Html.Partial("_PlayerTablePartial", Model)
+</div>
+
+    @section Scripts {
+        <script>
+        $(document).ready(function () {
+            // Load teams on league button click
+            $('.league-btn').click(function () {
+                var leagueName = $(this).data('league');
+
+                // Update active button style
+                $('.league-btn').removeClass('active shadow');
+                $(this).addClass('active shadow');
+
+                $.getJSON('@Url.Action("GetTeams", "Players")', { leagueName: leagueName }, function (data) {
+                    var dropdown = $('#teamDropdown');
+                    dropdown.empty();
+
+                    $.each(data, function (i, team) {
+                        dropdown.append($('<option>').text(team).val(team));
+                    });
+
+                    // Trigger change for the first team
+                    dropdown.trigger('change');
+                });
+            });
+
+            // Load players on team selection
+            $('#teamDropdown').change(function () {
+                var teamName = $(this).val();
+                $.get('@Url.Action("GetPlayers", "Players")', { teamName: teamName }, function (data) {
+                    $('#playersTable').html(data);
+
+                    new LazyLoad();
+                });
+            });
+        });
+        </script>
+    }
 

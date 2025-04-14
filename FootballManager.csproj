@@ -290,6 +290,7 @@
     <Content Include="Views\FileUploads\Index.cshtml" />
     <Content Include="Views\FileUploads\Upload.cshtml" />
     <Content Include="Views\FileUploads\_UploadedFilesList.cshtml" />
+    <Content Include="Views\Players\_PlayerTablePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UploadedFiles\" />

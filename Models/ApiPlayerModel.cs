@@ -41,14 +41,14 @@ namespace FootballManager.Models
 
     public class ApiPlayerTeam
     {
-        public int id { get; set; }
+        public int? id { get; set; }
         public string name { get; set; }
         public string logo { get; set; }
     }
 
     public class ApiLeague
     {
-        public int id { get; set; }
+        public int? id { get; set; }
         public string name { get; set; }
         public string country { get; set; }
         public string logo { get; set; }

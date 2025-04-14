@@ -1,0 +1,62 @@
+﻿@model IEnumerable<FootballManager.Models.Player>
+
+<table class="table table-hover table-bordered text-center shadow-sm bg-white rounded">
+    <thead class="thead-dark bg-dark text-white">
+        <tr>
+            <th>Photo</th>
+            <th>First</th>
+            <th>Last</th>
+            <th>Position</th>
+            <th>Nationality</th>
+            <th>Age</th>
+            <th>Height</th>
+            <th>Weight</th>
+            <th>Goals</th>
+            <th>Shots</th>
+            <th>Assists</th>
+            <th>Passes</th>
+            <th>Appearances</th>
+            <th>Team</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="@item.PhotoUrl" alt="Player Photo"
+                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;" />
+                </td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.Position</td>
+                <td>@item.Nationality</td>
+                <td>@item.Age</td>
+                <td>@item.Height</td>
+                <td>@item.Weight</td>
+                <td>@item.TotalGoals</td>
+                <td>@item.TotalShots</td>
+                <td>@item.Assists</td>
+                <td>@item.TotalPasses</td>
+                <td>@item.Appearances</td>
+                <td>
+                    <div class="d-flex align-items-center justify-content-center">
+                        @if (!string.IsNullOrEmpty(item.Team?.LogoUrl))
+                        {
+                            <img src="@item.Team.LogoUrl" alt="Logo" width="24" height="24" class="me-2" style="object-fit: contain;" />
+                        }
+                        @Html.ActionLink(item.Team?.Name ?? "Unknown", "Details", "Teams", new { id = item.TeamId }, new { @class = "ml-1" })
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        @Html.ActionLink("Edit", "Edit", new { id = item.PlayerId }, new { @class = "btn btn-outline-primary" })
+                        @Html.ActionLink("Details", "Details", new { id = item.PlayerId }, new { @class = "btn btn-outline-secondary" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.PlayerId }, new { @class = "btn btn-outline-danger" })
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
