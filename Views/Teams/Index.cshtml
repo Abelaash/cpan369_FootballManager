@@ -2,18 +2,31 @@
 
 @{
     ViewBag.Title = "Teams";
+    var selectedLeague = ViewBag.SelectedLeague as string;
 }
 
-<h2 class="text-center mt-4">Teams</h2>
-
-<div class="d-flex justify-content-between mb-3">
-    <p>
-        @Html.ActionLink("Create New Team", "Create", null, new { @class = "btn btn-success" })
-    </p>
-    <p>
-        @Html.ActionLink("Import Teams from API", "ImportFromApi", null, new { @class = "btn btn-primary" })
-    </p>
+<!-- League Buttons -->
+<div class="container-fluid py-5">
+    <div class="row justify-content-center g-3 px-4">
+        @foreach (var league in ViewBag.LeagueList as List<FootballManager.Models.LeagueOption>)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                <button type="button"
+                        class="btn btn-outline-primary w-100 py-3 league-btn @(league.Name == selectedLeague ? "active shadow-lg" : "")"
+                        data-league="@league.Name"
+                        style="font-size: 1.25rem; display: flex; align-items: center; justify-content: center;">
+                    <img src="@league.LogoUrl" alt="@league.Name Logo" width="30" height="30" class="mr-2" />
+                    <span>@league.Name</span>
+                </button>
+            </div>
+        }
+    </div>
 </div>
+
+<p>
+    @Html.ActionLink("Create New Team", "Create", null, new { @class = "btn btn-success" })
+    @Html.ActionLink("Import Teams from API", "Update Stats", null, new { @class = "btn btn-primary" })
+</p>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -24,53 +37,24 @@
     <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
 }
 
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>Team</th>
-            <th>@Html.DisplayNameFor(model => model.City)</th>
-            <th>@Html.DisplayNameFor(model => model.Wins)</th>
-            <th>@Html.DisplayNameFor(model => model.Losses)</th>
-            <th>@Html.DisplayNameFor(model => model.Draws)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.LogoUrl))
-                    {
-                        <img src="@item.LogoUrl" alt="logo" width="24" height="24" style="margin-right:5px;" />
-                    }
-                    @Html.ActionLink(item.Name, "Details", "Teams", new { id = item.TeamId }, null)
-                </td>
-                <td>@item.City</td>
-                <td>@item.Wins</td>
-                <td>@item.Losses</td>
-                <td>@item.Draws</td>
-                <td>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        @Html.ActionLink("Edit", "Edit", new { id = item.TeamId }, new { @class = "btn btn-sm btn-warning" })
-                    }
-                    else
-                    {
-                        <button class="btn btn-sm btn-warning" disabled>Edit (Access Denied)</button>
-                    }
-                    |
-                    @Html.ActionLink("Details", "Details", new { id = item.TeamId }, new { @class = "btn btn-sm btn-info" }) |
-                    @if (User.IsInRole("Admin"))
-                    {
-                        @Html.ActionLink("Delete", "Delete", new { id = item.TeamId }, new { @class = "btn btn-sm btn-danger" })
-                    }
-                    else
-                    {
-                        <button class="btn btn-sm btn-danger" disabled>Delete (Access Denied)</button>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- Teams Table Container -->
+<div id="teamsTable">
+    @Html.Partial("_TeamTablePartial", Model)
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.league-btn').click(function () {
+                var leagueName = $(this).data('league');
+
+                $('.league-btn').removeClass('active shadow');
+                $(this).addClass('active shadow');
+
+                $.get('@Url.Action("GetTeamsByLeague", "Teams")', { leagueName: leagueName }, function (data) {
+                    $('#teamsTable').html(data);
+                });
+            });
+        });
+    </script>
+}

@@ -38,7 +38,7 @@
 <!-- Top action buttons -->
 <p>
     @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
-    @Html.ActionLink("Import Players", "ImportMultipleTeamsFromApi", "Players", new { }, new { @class = "btn btn-primary ml-2" })
+    @Html.ActionLink("Update Players", "ImportMultipleTeamsFromApi", "Players", new { }, new { @class = "btn btn-primary ml-2" })
 </p>
 
 @if (!string.IsNullOrEmpty(Request.QueryString["leagueName"]))

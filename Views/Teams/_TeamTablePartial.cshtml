@@ -1,0 +1,52 @@
+﻿@model IEnumerable<FootballManager.Models.Team>
+
+<table class="table table-hover table-bordered text-center shadow-sm bg-white rounded">
+    <thead class="thead-dark bg-dark text-white">
+        <tr>
+            <th>Team</th>
+            <th>@Html.DisplayNameFor(model => model.City)</th>
+            <th>@Html.DisplayNameFor(model => model.Wins)</th>
+            <th>@Html.DisplayNameFor(model => model.Losses)</th>
+            <th>@Html.DisplayNameFor(model => model.Draws)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.LogoUrl))
+                    {
+                        <img src="@item.LogoUrl" alt="logo" width="24" height="24" style="margin-right:5px;" />
+                    }
+                    @Html.ActionLink(item.Name, "Details", "Teams", new { id = item.TeamId }, null)
+                </td>
+                <td>@item.City</td>
+                <td>@item.Wins</td>
+                <td>@item.Losses</td>
+                <td>@item.Draws</td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = item.TeamId }, new { @class = "btn btn-outline-primary" })
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-primary" disabled>Edit (Access Denied)</button>
+                    }
+                    |
+                    @Html.ActionLink("Details", "Details", new { id = item.TeamId }, new { @class = "btn btn-outline-secondary" }) |
+                    @if (User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Delete", "Delete", new { id = item.TeamId }, new { @class = "btn btn-outline-danger" })
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-danger" disabled>Delete (Access Denied)</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

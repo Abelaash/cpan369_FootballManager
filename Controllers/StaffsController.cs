@@ -19,40 +19,38 @@ namespace FootballManager.Controllers
 
         // GET: Staffs
         [Authorize]
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            var service = new ApiFootballService();
-            var leagues = new List<string> { "Eredivisie"};
+            ViewBag.LeagueList = GetLeagueList();
 
-            foreach (var league in leagues)
-            {
-                var coaches = await service.GetCoachesByLeagueAsync(league); // ✅ Await the async call
+            var staffList = db.Staff
+                              .Include(s => s.Team)
+                              .ToList();
 
-                foreach (var coach in coaches)
-                {
-                    var team = db.Teams.FirstOrDefault(t => t.Name.Trim().ToLower() == coach.Team.Trim().ToLower());
-
-                    if (team != null && !db.Staff.Any(s =>
-                        s.FirstName.Trim().ToLower() == coach.FirstName.Trim().ToLower() &&
-                        s.LastName.Trim().ToLower() == coach.LastName.Trim().ToLower() &&
-                        s.Role == "Coach" &&
-                        s.TeamId == team.TeamId))
-                    {
-                        db.Staff.Add(new Staff
-                        {
-                            FirstName = coach.FirstName,
-                            LastName = coach.LastName,
-                            Role = "Coach",
-                            TeamId = team.TeamId
-                        });
-                    }
-                }
-            }
-
-            db.SaveChanges(); // ✅ Save once
-
-            var staffList = db.Staff.Include(s => s.Team).ToList();
             return View(staffList);
+        }
+
+        public ActionResult GetStaffByLeague(string leagueName)
+        {
+            var staff = db.Staff
+                  .Include(s => s.Team)
+                  .Where(s => s.Team.League == leagueName)
+                  .ToList();
+
+            return PartialView("_StaffTablePartial", staff);
+        }
+
+        private List<LeagueOption> GetLeagueList()
+        {
+            return new List<LeagueOption>
+            {
+                new LeagueOption { Name = "Premier League", LogoUrl = "https://media-4.api-sports.io/football/leagues/39.png" },
+                new LeagueOption { Name = "La Liga", LogoUrl = "https://media-4.api-sports.io/football/leagues/140.png" },
+                new LeagueOption { Name = "Bundesliga", LogoUrl = "https://media-4.api-sports.io/football/leagues/78.png" },
+                new LeagueOption { Name = "Serie A", LogoUrl = "https://media-4.api-sports.io/football/leagues/135.png" },
+                new LeagueOption { Name = "Ligue 1", LogoUrl = "https://media-4.api-sports.io/football/leagues/61.png" },
+                new LeagueOption { Name = "Eredivisie", LogoUrl = "https://media-4.api-sports.io/football/leagues/88.png" },
+            };
         }
 
         // GET: Staffs/Create

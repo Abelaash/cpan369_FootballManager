@@ -1,51 +1,48 @@
 ﻿@model IEnumerable<FootballManager.Models.Staff>
 
 @{
-    ViewBag.Title = "Team Staff";
+    ViewBag.Title = "Coaches";
+    var selectedLeague = ViewBag.SelectedLeague as string;
 }
 
-<h2>Team Staff</h2>
+@*<div class="container-fluid py-5">
+    <div class="row justify-content-center g-3 px-4">
+        @foreach (var league in ViewBag.LeagueList as List<FootballManager.Models.LeagueOption>)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+                <button type="button"
+                        class="btn btn-outline-primary w-100 py-3 league-btn @(league.Name == selectedLeague ? "active shadow-lg" : "")"
+                        data-league="@league.Name"
+                        style="font-size: 1.25rem; display: flex; align-items: center; justify-content: center;">
+                    <img src="@league.LogoUrl" alt="@league.Name Logo" width="30" height="30" class="mr-2" />
+                    <span>@league.Name</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>*@
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New Staff", "Create", null, new { @class = "btn btn-success" })
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Role)
-        </th>
-        <th>
-            Team
-        </th>
-        <th></th>
-    </tr>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                @Html.ActionLink(item.Team.Name, "Details", "Teams", new { id = item.TeamId }, null)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.StaffId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.StaffId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.StaffId })
-            </td>
-        </tr>
-    }
-</table>
+<div id="teamsTable">
+    @Html.Partial("_StaffTablePartial", Model)
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.league-btn').click(function () {
+                var leagueName = $(this).data('league');
+
+                $('.league-btn').removeClass('active shadow');
+                $(this).addClass('active shadow');
+
+                $.get('@Url.Action("GetStaffByLeague", "Staffs")', { leagueName: leagueName }, function (data) {
+                    $('#staffTable').html(data);
+                });
+            });
+        });
+    </script>
+}

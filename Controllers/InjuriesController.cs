@@ -18,35 +18,35 @@ namespace FootballManager.Controllers
 
         // GET: Injuries
         [Authorize]
-        public async Task<ActionResult> Index()
+        public  ActionResult Index()
         {
-            var service = new ApiFootballService();
-            var leagueIds = new List<int> { 39 }; // Premier League, La Liga, etc. 140, 78, 61, 135, 88
-            int season = 2024;
+            //var service = new ApiFootballService();
+            //var leagueIds = new List<int> { 39 }; // Premier League, La Liga, etc. 140, 78, 61, 135, 88
+            //int season = 2024;
 
-            foreach (var leagueId in leagueIds)
-            {
-                var injuries = await service.GetInjuriesByLeagueAndSeason(leagueId, season);
+            //foreach (var leagueId in leagueIds)
+            //{
+            //    var injuries = await service.GetInjuriesByLeagueAndSeason(leagueId, season);
 
-                foreach (var injury in injuries)
-                {
-                    if(injury.PlayerId == 0 || injury.TeamId == 0)
-                        continue; // Skip unmatched injuries
-                    // Prevent duplicates (same player, team, and date)
-                    bool exists = db.Injuries.Any(i =>
-                        i.PlayerId == injury.PlayerId &&
-                        i.TeamId == injury.TeamId &&
-                        i.DateInjured == injury.DateInjured &&
-                        i.InjuryType == injury.InjuryType);
+            //    foreach (var injury in injuries)
+            //    {
+            //        if(injury.PlayerId == 0 || injury.TeamId == 0)
+            //            continue; // Skip unmatched injuries
+            //        // Prevent duplicates (same player, team, and date)
+            //        bool exists = db.Injuries.Any(i =>
+            //            i.PlayerId == injury.PlayerId &&
+            //            i.TeamId == injury.TeamId &&
+            //            i.DateInjured == injury.DateInjured &&
+            //            i.InjuryType == injury.InjuryType);
 
-                    if (!exists)
-                    {
-                        db.Injuries.Add(injury);
-                    }
-                }
-            }
+            //        if (!exists)
+            //        {
+            //            db.Injuries.Add(injury);
+            //        }
+            //    }
+            //}
 
-            db.SaveChanges();
+            //db.SaveChanges();
 
             var allInjuries = db.Injuries.Include(i => i.Player).Include(i => i.Team).ToList();
             return View(allInjuries);

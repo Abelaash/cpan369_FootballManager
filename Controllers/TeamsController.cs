@@ -19,7 +19,31 @@ namespace FootballManager.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            return View(db.Teams.ToList());
+            ViewBag.LeagueList = GetLeagueList(); 
+            var teams = db.Teams.ToList();
+            return View(teams);
+        }
+
+        public ActionResult GetTeamsByLeague(string leagueName)
+        {
+            var teams = db.Teams
+                          .Where(t => t.League == leagueName)
+                          .ToList();
+
+            return PartialView("_TeamTablePartial", teams);
+        }
+
+        private List<LeagueOption> GetLeagueList()
+        {
+            return new List<LeagueOption>
+            {
+                new LeagueOption { Name = "Premier League", LogoUrl = "https://media-4.api-sports.io/football/leagues/39.png" },
+                new LeagueOption { Name = "La Liga", LogoUrl = "https://media-4.api-sports.io/football/leagues/140.png" },
+                new LeagueOption { Name = "Bundesliga", LogoUrl = "https://media-4.api-sports.io/football/leagues/78.png" },
+                new LeagueOption { Name = "Serie A", LogoUrl = "https://media-4.api-sports.io/football/leagues/135.png" },
+                new LeagueOption { Name = "Ligue 1", LogoUrl = "https://media-4.api-sports.io/football/leagues/61.png" },
+                new LeagueOption { Name = "Eredivisie", LogoUrl = "https://media-4.api-sports.io/football/leagues/88.png" },
+            };
         }
 
         // GET: Teams/Details/5

@@ -291,6 +291,8 @@
     <Content Include="Views\FileUploads\Upload.cshtml" />
     <Content Include="Views\FileUploads\_UploadedFilesList.cshtml" />
     <Content Include="Views\Players\_PlayerTablePartial.cshtml" />
+    <Content Include="Views\Teams\_TeamTablePartial.cshtml" />
+    <Content Include="Views\Staffs\_StaffTablePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UploadedFiles\" />
