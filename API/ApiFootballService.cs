@@ -22,7 +22,6 @@ namespace FootballManager.API
             return client;
         }
 
-        // ✅ GET TEAMS by League + Season
         public async Task<List<ApiTeamModel>> GetTeamsByLeagueAsync(int leagueId, int season)
         {
             using (var client = CreateClient())
@@ -43,7 +42,6 @@ namespace FootballManager.API
             }
         }
 
-        // ✅ GET PLAYERS by Team
         public async Task<List<Player>> GetPlayersByTeamAsync(int teamId, int season)
         {
             var allPlayers = new List<Player>();
@@ -91,7 +89,7 @@ namespace FootballManager.API
                         break;
 
                     page++;
-                    await Task.Delay(1000); // Respect API rate limit
+                    await Task.Delay(1000);
                 }
             }
 
@@ -105,7 +103,6 @@ namespace FootballManager.API
             return decimal.TryParse(numberPart, out decimal result) ? result : 0;
         }
 
-        // ✅ LEAGUE STANDINGS
         public List<Team> GetLeagueStandings(string leagueName)
         {
             var leagueIds = new Dictionary<string, int>

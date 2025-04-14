@@ -4,73 +4,97 @@
     ViewBag.Title = "Create Team";
 }
 
-<h2>Create Team</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white text-center">
+                    <h3>Create Team</h3>
+                </div>
+                <div class="card-body">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.Name)
+                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Enter team name" })
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        </div>
 
-    <div class="form-horizontal">
-        <h4>Team Details</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="mb-3">
+                            @Html.Label("Country") 
+                            @Html.TextBoxFor(model => model.City, new { @class = "form-control", placeholder = "Enter country" }) <!-- Optional: update placeholder too -->
+                            @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                        </div>
 
-        <!-- Team Name -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Enter team name" })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
-        <!-- City -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.City, new { @class = "form-control", placeholder = "Enter city name" })
-                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.League)
+                            @Html.TextBoxFor(model => model.League, new { @class = "form-control", placeholder = "Enter league name" })
+                            @Html.ValidationMessageFor(model => model.League, "", new { @class = "text-danger" })
+                        </div>
 
-        <!-- Wins -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Wins, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Wins, new { @class = "form-control", type = "number", min = "0" })
-                @Html.ValidationMessageFor(model => model.Wins, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(model => model.Wins)
+                                @Html.TextBoxFor(model => model.Wins, new { @class = "form-control", type = "number", min = "0" })
+                                @Html.ValidationMessageFor(model => model.Wins, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(model => model.Losses)
+                                @Html.TextBoxFor(model => model.Losses, new { @class = "form-control", type = "number", min = "0" })
+                                @Html.ValidationMessageFor(model => model.Losses, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
 
-        <!-- Losses -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Losses, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Losses, new { @class = "form-control", type = "number", min = "0" })
-                @Html.ValidationMessageFor(model => model.Losses, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(model => model.Draws)
+                                @Html.TextBoxFor(model => model.Draws, new { @class = "form-control", type = "number", min = "0" })
+                                @Html.ValidationMessageFor(model => model.Draws, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(model => model.matches_played)
+                                @Html.TextBoxFor(model => model.matches_played, new { @class = "form-control", type = "number", min = "0" })
+                                @Html.ValidationMessageFor(model => model.matches_played, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
 
-        <!-- Draws -->
-        <div class="form-group">
-            @Html.LabelFor(model => model.Draws, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Draws, new { @class = "form-control", type = "number", min = "0" })
-                @Html.ValidationMessageFor(model => model.Draws, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(model => model.goals_for)
+                                @Html.TextBoxFor(model => model.goals_for, new { @class = "form-control", type = "number", min = "0" })
+                                @Html.ValidationMessageFor(model => model.goals_for, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                @Html.LabelFor(model => model.goals_against)
+                                @Html.TextBoxFor(model => model.goals_against, new { @class = "form-control", type = "number", min = "0" })
+                                @Html.ValidationMessageFor(model => model.goals_against, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
 
-        <!-- Submit Button -->
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create Team" class="btn btn-primary" />
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.Points)
+                            @Html.TextBoxFor(model => model.Points, new { @class = "form-control", type = "number", min = "0" })
+                            @Html.ValidationMessageFor(model => model.Points, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.LogoUrl)
+                            @Html.TextBoxFor(model => model.LogoUrl, new { @class = "form-control", placeholder = "Paste logo image URL (optional)" })
+                        </div>
+
+                        <div class="text-center">
+                            <input type="submit" value="Create Team" class="btn btn-success me-2" />
+                            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
 </div>
 
 @section Scripts {

@@ -1,74 +1,64 @@
 ﻿@model FootballManager.Models.Player
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Player Details";
 }
 
-<h2>Details</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">@Model.FirstName @Model.LastName</h3>
+                    <small class="text-light">@Model.Position</small>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="@Model.PhotoUrl" alt="@Model.FirstName @Model.LastName" class="img-fluid rounded" style="max-height: 200px;" />
+                    </div>
 
-<div>
-    <h4>Player</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
+                    <dl class="row">
 
-        <dd>
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
+                        <dt class="col-sm-4">Age</dt>
+                        <dd class="col-sm-8">@Model.Age</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
+                        <dt class="col-sm-4">Height</dt>
+                        <dd class="col-sm-8">@Model.Height</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
+                        <dt class="col-sm-4">Weight</dt>
+                        <dd class="col-sm-8">@Model.Weight</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Position)
-        </dt>
+                        <dt class="col-sm-4">Nationality</dt>
+                        <dd class="col-sm-8">@Model.Nationality</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Position)
-        </dd>
+                        <dt class="col-sm-4">Team</dt>
+                        <dd class="col-sm-8">@Model.TeamName</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.JerseyNumber)
-        </dt>
+                        <dt class="col-sm-4">League</dt>
+                        <dd class="col-sm-8">@Model.LeagueName</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.JerseyNumber)
-        </dd>
+                        <dt class="col-sm-4">Appearances</dt>
+                        <dd class="col-sm-8">@Model.Appearances</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Age)
-        </dt>
+                        <dt class="col-sm-4">Goals</dt>
+                        <dd class="col-sm-8">@Model.TotalGoals</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Age)
-        </dd>
+                        <dt class="col-sm-4">Assists</dt>
+                        <dd class="col-sm-8">@Model.Assists</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Height)
-        </dt>
+                        <dt class="col-sm-4">Total Shots</dt>
+                        <dd class="col-sm-8">@Model.TotalShots</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Height)
-        </dd>
+                        <dt class="col-sm-4">Total Passes</dt>
+                        <dd class="col-sm-8">@Model.TotalPasses</dd>
+                    </dl>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Weight)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Weight)
-        </dd>
-
-    </dl>
+                    <div class="text-center mt-4">
+                        @Html.ActionLink("Edit", "Edit", new { id = Model.PlayerId }, new { @class = "btn btn-warning me-2" })
+                        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.PlayerId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
