@@ -67,7 +67,7 @@ All these concepts were applied in this Football Manager application to build a 
 - **API-FOOTBALL**
 
 ### 📷 Screenshots of the Project
-Need to add screenshots
+![HomePage]()
 
 ## 👤 Collaborators
 - **Abelaash Giritharan - N01285813**
