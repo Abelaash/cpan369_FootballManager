@@ -32,22 +32,16 @@ namespace FootballManager.Controllers
             if (team == null)
                 return HttpNotFound();
 
-            var upcomingMatches = db.Matches
-                .Include(m => m.HomeTeam)
-                .Include(m => m.AwayTeam)
-                .Where(m =>
-                    m.Status == "Upcoming" &&
-                    m.MatchDate > DateTime.UtcNow &&
-                    (m.HomeTeamId == team.TeamId || m.AwayTeamId == team.TeamId))
-                .OrderBy(m => m.MatchDate)
-                .ToList();
+            var apiService = new ApiFootballService();
+            var apiTeamId = apiService.GetApiTeamId(team.Name);
+            var fixtures = apiService.GetUpcomingMatchesByTeam(apiTeamId);
 
             var squad = db.Players.Where(p => p.TeamId == team.TeamId).ToList();
 
             var viewModel = new TeamDetailsViewModel
             {
                 Team = team,
-                UpcomingMatches = upcomingMatches,
+                UpcomingMatches = fixtures,
                 Squad = squad
             };
 
@@ -164,5 +158,6 @@ namespace FootballManager.Controllers
                 db.Dispose();
             base.Dispose(disposing);
         }
+
     }
 }

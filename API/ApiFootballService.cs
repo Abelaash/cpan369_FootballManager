@@ -176,6 +176,29 @@ namespace FootballManager.API
             }
         }
 
+        // Fixtures by team
+        public List<Match> GetUpcomingMatchesByTeam(int teamId, int count = 3)
+        {
+            string url = $"{baseUrl}/fixtures?season=2024&team={teamId}&next={count}";
+
+            using (var client = CreateClient())
+            {
+                var response = client.GetStringAsync(url).Result;
+                dynamic json = JsonConvert.DeserializeObject(response);
+
+                return ((IEnumerable<dynamic>)json.response).Select(fixture => new Match
+                {
+                    MatchDate = DateTime.Parse((string)fixture.fixture.date),
+                    Venue = fixture.fixture.venue.name ?? "Unknown",
+                    Status = "Upcoming",
+                    HomeTeamName = fixture.teams.home.name,
+                    AwayTeamName = fixture.teams.away.name,
+                    HomeTeamLogo = fixture.teams.home.logo,
+                    AwayTeamLogo = fixture.teams.away.logo
+                }).ToList();
+            }
+        }
+
         // ✅ INJURIES
         public async Task<List<Injury>> GetInjuriesByLeagueAndSeason(int leagueId, int season)
         {
@@ -254,5 +277,142 @@ namespace FootballManager.API
 
             return coaches;
         }
+
+        public int GetApiTeamId(string teamName)
+        {
+            if (TeamNameToApiId.TryGetValue(teamName, out int apiId))
+                return apiId;
+
+            throw new Exception($"API ID for team '{teamName}' not found. Please update TeamNameToApiId mapping.");
+        }
+
+        private static readonly Dictionary<string, int> TeamNameToApiId = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+        {
+            // Premier League Teams
+            { "Manchester United", 33 },
+            { "Newcastle", 34 },
+            { "Bournemouth", 35 },
+            { "Fulham", 36 },
+            { "Wolves", 39 },
+            { "Liverpool", 40 },
+            { "Southampton", 41 },
+            { "Arsenal", 42 },
+            { "Everton", 45 },
+            { "Leicester", 46 },
+            { "Tottenham", 47 },
+            { "West Ham", 48 },
+            { "Chelsea", 49 },
+            { "Manchester City", 50 },
+            { "Brighton", 51 },
+            { "Crystal Palace", 52 },
+            { "Brentford", 55 },
+            { "Ipswich", 57 },
+            { "Nottingham Forest", 65 },
+            { "Aston Villa", 66 },
+
+            // La Liga Teams
+            { "Barcelona", 529 },
+            { "Atletico Madrid", 530 },
+            { "Athletic Club", 531 },
+            { "Valencia", 532 },
+            { "Villarreal", 533 },
+            { "Las Palmas", 534 },
+            { "Sevilla", 536 },
+            { "Leganes", 537 },
+            { "Celta Vigo", 538 },
+            { "Espanyol", 540 },
+            { "Real Madrid", 541 },
+            { "Alaves", 542 },
+            { "Real Betis", 543 },
+            { "Getafe", 546 },
+            { "Girona", 547 },
+            { "Real Sociedad", 548 },
+            { "Valladolid", 720 },
+            { "Osasuna", 727 },
+            { "Rayo Vallecano", 728 },
+            { "Mallorca", 798 },
+
+            // Bundesliga Teams (2024)
+            { "Bayern München", 157 },
+            { "SC Freiburg", 160 },
+            { "VfL Wolfsburg", 161 },
+            { "Werder Bremen", 162 },
+            { "Borussia Mönchengladbach", 163 },
+            { "FSV Mainz 05", 164 },
+            { "Borussia Dortmund", 165 },
+            { "1899 Hoffenheim", 167 },
+            { "Bayer Leverkusen", 168 },
+            { "Eintracht Frankfurt", 169 },
+            { "FC Augsburg", 170 },
+            { "VfB Stuttgart", 172 },
+            { "RB Leipzig", 173 },
+            { "VfL Bochum", 176 },
+            { "1. FC Heidenheim", 180 },
+            { "Union Berlin", 182 },
+            { "FC St. Pauli", 186 },
+            { "Holstein Kiel", 191 },
+
+            // Ligue 1 Teams
+            { "Angers", 77 },
+            { "Lille", 79 },
+            { "Lyon", 80 },
+            { "Marseille", 81 },
+            { "Montpellier", 82 },
+            { "Nantes", 83 },
+            { "Nice", 84 },
+            { "Paris Saint Germain", 85 },
+            { "Monaco", 91 },
+            { "Reims", 93 },
+            { "Rennes", 94 },
+            { "Strasbourg", 95 },
+            { "Toulouse", 96 },
+            { "Stade Brestois 29", 106 },
+            { "Auxerre", 108 },
+            { "LE Havre", 111 },
+            { "Lens", 116 },
+            { "Saint Etienne", 1063 },
+
+            // Serie A Teams
+            { "Lazio", 487 },
+            { "AC Milan", 489 },
+            { "Cagliari", 490 },
+            { "Napoli", 492 },
+            { "Udinese", 494 },
+            { "Genoa", 495 },
+            { "Juventus", 496 },
+            { "AS Roma", 497 },
+            { "Atalanta", 499 },
+            { "Bologna", 500 },
+            { "Fiorentina", 502 },
+            { "Torino", 503 },
+            { "Verona", 504 },
+            { "Inter", 505 },
+            { "Empoli", 511 },
+            { "Venezia", 517 },
+            { "Parma", 523 },
+            { "Lecce", 867 },
+            { "Como", 895 },
+            { "Monza", 1579 },
+
+            // Eredivisie Teams
+            { "PEC Zwolle", 193 },
+            { "Ajax", 194 },
+            { "Willem II", 195 },
+            { "PSV Eindhoven", 197 },
+            { "AZ Alkmaar", 201 },
+            { "Groningen", 202 },
+            { "NAC Breda", 203 },
+            { "Fortuna Sittard", 205 },
+            { "Heracles", 206 },
+            { "Utrecht", 207 },
+            { "Feyenoord", 209 },
+            { "Heerenveen", 210 },
+            { "GO Ahead Eagles", 410 },
+            { "NEC Nijmegen", 413 },
+            { "Twente", 415 },
+            { "Waalwijk", 417 },
+            { "Almere City FC", 419 },
+            { "Sparta Rotterdam", 426 }
+        };
     }
 }
