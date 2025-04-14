@@ -68,7 +68,7 @@ All these concepts were applied in this Football Manager application to build a 
 
 ### 📷 Screenshots of the Project
 <p align="center">
-  <img src="Content/Images/homepage.png" width="600">
+  <img src="Content/Images/HomePage.png" width="600">
 </p>
 
 ## 👤 Collaborators
