@@ -93,15 +93,7 @@ All these concepts were applied in this Football Manager application to build a 
   <br/><em>Upcoming Fixtures</em>
 </p>
 
-<p align="center">
-  <img src="Content/Images/TeamSquad.png" width="600" alt="Team Squad"/>
-  <br/><em>Squad Tab - Player Cards</em>
-</p>
 
-<p align="center">
-  <img src="Content/Images/PlayerDetails.png" width="600" alt="Player Details"/>
-  <br/><em>Player Details Page</em>
-</p>
 
 
 ## 👤 Collaborators
