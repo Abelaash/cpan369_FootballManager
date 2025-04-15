@@ -67,7 +67,6 @@ All these concepts were applied in this Football Manager application to build a 
 - **API-FOOTBALL**
 
 ### 📷 Screenshots of the Project
-### 📷 Screenshots of the Project
 
 <p align="center">
   <img src="Content/Images/HomePage.png" width="600" alt="Home Page"/>
@@ -91,6 +90,18 @@ All these concepts were applied in this Football Manager application to build a 
 <p align="center">
   <img src="Content/Images/TeamFixtures.png" width="600" alt="Team Fixtures"/>
   <br/><em>Upcoming Fixtures</em>
+</p>
+
+<p align="center">
+  <img src="Content/Images/SquadTab.png" width="600" alt="Squad Tab" />
+  <br/>
+  <em>🔹 Squad Tab — Displays players from the selected team with their photo, position, nationality, age, appearances, goals, assists, and a "View Profile" button. The layout resembles a player card gallery, making it user-friendly and visually engaging.</em>
+</p>
+
+<p align="center">
+  <img src="Content/Images/PlayerDetails.png" width="600" alt="Player Details Page" />
+  <br/>
+  <em>🔹 Player Details Page — Provides detailed stats for individual players, including height, weight, nationality, current team, league, appearances, goals, assists, total shots, and passes. This page also includes editing options for admin access.</em>
 </p>
 
 
