@@ -101,7 +101,7 @@ All these concepts were applied in this Football Manager application to build a 
 <p align="center">
   <img src="Content/Images/SquadList.png" width="800" alt="Players List Page" />
   <br/>
-  <em>🔹 Team List</em>
+  <em>Team List</em>
 </p>
 
 
