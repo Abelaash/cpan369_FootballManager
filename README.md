@@ -78,11 +78,6 @@ All these concepts were applied in this Football Manager application to build a 
 </p>
 
 <p align="center">
-  <img src="Content/Images/TeamSectionLL.png" width="600" alt="La Liga Team Section"/>
-  <br/><em>La Liga Team View</em>
-</p>
-
-<p align="center">
   <img src="Content/Images/TeamStats.png" width="600" alt="Team Stats"/>
   <br/><em>Team Stats View</em>
 </p>
@@ -95,13 +90,18 @@ All these concepts were applied in this Football Manager application to build a 
 <p align="center">
   <img src="Content/Images/SquadTab.png" width="600" alt="Squad Tab" />
   <br/>
-  <em>🔹 Squad Tab — Displays players from the selected team with their photo, position, nationality, age, appearances, goals, assists, and a "View Profile" button. The layout resembles a player card gallery, making it user-friendly and visually engaging.</em>
+  <em>Squad Tab</em>
 </p>
 
 <p align="center">
   <img src="Content/Images/PlayerDetails.png" width="600" alt="Player Details Page" />
   <br/>
-  <em>🔹 Player Details Page — Provides detailed stats for individual players, including height, weight, nationality, current team, league, appearances, goals, assists, total shots, and passes. This page also includes editing options for admin access.</em>
+  <em>Player Details Page</em>
+</p>
+<p align="center">
+  <img src="Content/Images/SquadList.png" width="800" alt="Players List Page" />
+  <br/>
+  <em>🔹 Team List</em>
 </p>
 
 
